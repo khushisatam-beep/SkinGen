@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <circle cx="50" cy="50" r="46" stroke="#254d3c" stroke-width="3" fill="#f4f7f4"/>
+  <circle cx="50" cy="50" r="42" stroke="#254d3c" stroke-width="1.5" stroke-dasharray="2 2"/>
+  <!-- Leaf and DNA Motif -->
+  <path d="M50 20 C62 30 65 46 50 65 C35 46 38 30 50 20 Z" fill="#2d5e4a" opacity="0.85"/>
+  <path d="M42 35 C48 40 52 40 58 35" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <path d="M40 45 C47 50 53 50 60 45" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <path d="M44 55 C48 58 52 58 56 55" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <line x1="50" y1="20" x2="50" y2="72" stroke="#ffffff" stroke-width="2"/>
+  <!-- Small base stem -->
+  <path d="M48 72 C50 75 50 78 50 82" stroke="#254d3c" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
