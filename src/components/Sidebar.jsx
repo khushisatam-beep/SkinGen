@@ -8,7 +8,8 @@ import {
   BarChart3,
   Settings,
   HelpCircle,
-  PlusCircle
+  PlusCircle,
+  FileText
 } from 'lucide-react';
 // // useContext: Importing useApp to access global activeTab and navigation actions
 import { useApp } from '../context/AppContext';
@@ -24,6 +25,7 @@ export default function Sidebar() {
   const navItems = [
     { id: 'dashboard', label: 'DASHBOARD', icon: LayoutDashboard },
     { id: 'assessment', label: 'SKIN ASSESSMENT', icon: Activity },
+    { id: 'userform', label: 'USER DETAILS', icon: FileText },
     { id: 'risk', label: 'HEREDITARY RISK', icon: Dna },
     { id: 'family', label: 'FAMILY HISTORY', icon: Users },
     { id: 'care', label: 'CARE PLANS', icon: ClipboardList },

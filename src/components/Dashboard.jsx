@@ -72,7 +72,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stat 3: Health Profile Complete */}
-        <div className="stat-card">
+        <div className="stat-card" onClick={() => setActiveTab('userform')} style={{ cursor: 'pointer' }}>
           <div className="stat-card-header">
             <span>HEALTH PROFILE</span>
             <UserCheck className="stat-icon" />

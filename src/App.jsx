@@ -1,80 +1,77 @@
-import React, { useState } from 'react';
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
-import Dashboard from './components/Dashboard';
-import SkinAssessmentForm from './components/SkinAssessmentForm';
-import AssessmentResult from './components/AssessmentResult';
-import AuthModal from './components/AuthModal';
-import {
-  HereditaryRiskView,
-  CarePlansView,
-  FamilyHistoryView,
-  ReportsView
-} from './components/PlaceholderViews';
-// // useContext: Accessing global state via custom hook useApp
-import { useApp } from './context/AppContext';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import Home from './components/Home';
+import UserForm from './components/UserForm';
+import About from './components/About';
 
 export default function App() {
-  // ==========================================================================
-  // 3. useContext: AppContext
-  // Reading active navigation tab and global notification from AppContext
-  // ==========================================================================
-  const { activeTab, notification } = useApp();
-
-  // ==========================================================================
-  // 1. useState: Local UI states
-  // Controls banner dismissal and layout mode
-  // ==========================================================================
-  const [showBanner, setShowBanner] = useState(true);
-
-  // View router based on activeTab
-  const renderCurrentView = () => {
-    switch (activeTab) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'assessment':
-        return <SkinAssessmentForm />;
-      case 'result':
-        return <AssessmentResult />;
-      case 'risk':
-        return <HereditaryRiskView />;
-      case 'care':
-        return <CarePlansView />;
-      case 'family':
-        return <FamilyHistoryView />;
-      case 'reports':
-        return <ReportsView />;
-      default:
-        return <Dashboard />;
-    }
-  };
-
   return (
-    <div className="app-container">
-      {/* Figma Sidebar Navigation */}
-      <Sidebar />
+    <BrowserRouter>
+      {/* Simple Navigation Bar matching viva requirements: Home | User Form | About */}
+      <nav
+        style={{
+          backgroundColor: '#1b3b2b',
+          padding: '12px 24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '16px',
+          color: '#ffffff',
+          fontSize: '14px',
+          fontWeight: 600,
+          borderBottom: '1px solid #142e21'
+        }}
+      >
+        <Link
+          to="/"
+          style={{
+            color: '#ffffff',
+            textDecoration: 'none'
+          }}
+        >
+          Home
+        </Link>
+        <span style={{ color: '#88a695' }}>|</span>
+        <Link
+          to="/form"
+          style={{
+            color: '#ffffff',
+            textDecoration: 'none'
+          }}
+        >
+          User Form
+        </Link>
+        <span style={{ color: '#88a695' }}>|</span>
+        <Link
+          to="/about"
+          style={{
+            color: '#ffffff',
+            textDecoration: 'none'
+          }}
+        >
+          About
+        </Link>
+      </nav>
+      <Routes>
+        <Route path="/" element={<Home />} />
 
-      {/* Main Application Wrapper */}
-      <div className="main-wrapper">
-        {/* Figma Top Header Bar */}
-        <Header />
-
-        {/* Page Content Area */}
-        <main className="page-content">
-          {/* Global Notification Toast (if active) */}
-          {notification && (
-            <div className="banner-toast">
-              <span>{notification.message}</span>
+        <Route
+          path="/form"
+          element={
+            <div style={{ padding: '24px 16px', minHeight: 'calc(100vh - 50px)', backgroundColor: '#f4f7f5' }}>
+              <UserForm />
             </div>
-          )}
-
-          {/* Active View Content */}
-          {renderCurrentView()}
-        </main>
-      </div>
-
-      {/* Login & User Profile Modal (Figma Screen) */}
-      <AuthModal />
-    </div>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <div style={{ padding: '24px 16px', minHeight: 'calc(100vh - 50px)', backgroundColor: '#f4f7f5' }}>
+              <About />
+            </div>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
