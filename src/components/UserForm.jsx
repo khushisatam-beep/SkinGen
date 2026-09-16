@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-/**
- * UserForm Component
- * Demonstrates:
- * 1. Form handling using React controlled inputs (useState & onChange)
- * 2. Regular expression (Regex) validation for inputs
- * 3. event.preventDefault() to prevent page reload on form submit
- */
+
 export default function UserForm() {
   // 1. useState: Store form field values
   const [formData, setFormData] = useState({
@@ -41,8 +36,7 @@ export default function UserForm() {
 
   // Handle form submission with preventDefault() and regex validation
   const handleSubmit = (e) => {
-    // Prevent default browser behavior (page reload)
-    e.preventDefault();
+    e.preventDefault(); 
 
     const newErrors = {};
 
@@ -111,7 +105,7 @@ export default function UserForm() {
         User Details
       </h2>
       <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '22px' }}>
-        Please enter your details below.
+        Demonstration of React form handling, regex validation, and preventDefault().
       </p>
 
       {/* Success Message Banner */}
@@ -296,6 +290,21 @@ export default function UserForm() {
         >
           Submit
         </button>
+
+        {/* Navigation Link back to Home */}
+        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+          <Link
+            to="/"
+            style={{
+              color: '#275941',
+              fontSize: '13px',
+              textDecoration: 'none',
+              fontWeight: 500
+            }}
+          >
+            ← Back to Home
+          </Link>
+        </div>
       </form>
     </div>
   );
