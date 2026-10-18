@@ -1,0 +1,17 @@
+# Node.js Server Container
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package manifests
+COPY package*.json ./
+
+# Install dependencies without devDependencies
+RUN npm ci --omit=dev
+
+# Copy server code
+COPY server/ ./server/
+
+EXPOSE 5000
+
+CMD ["node", "server/server.js"]

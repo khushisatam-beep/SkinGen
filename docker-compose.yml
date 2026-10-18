@@ -1,16 +1,20 @@
 services:
   frontend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: skingen-frontend
-    command: npm run dev -- --host 0.0.0.0
     ports:
-      - "3000:3000"
+      - "3000:80"
     restart: unless-stopped
+    depends_on:
+      - server
 
   server:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.server
     container_name: skingen-server
-    command: npm run server
     ports:
       - "5000:5000"
     restart: unless-stopped

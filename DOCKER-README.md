@@ -13,10 +13,10 @@ Open:
 - Node.js server: http://localhost:5000/
 - Server routes: http://localhost:5000/about, /user, /async
 
-Stop containers with Ctrl+C, then run:
+Stop containers:
 
 ```powershell
 docker compose down
 ```
 
-This configuration runs the React/Vite frontend and the small Node.js HTTP server included in this repository. It does not add a Python ML service or MongoDB because those components are not present in this ZIP.
+For complete architecture details, individual container commands, Nginx SPA routing notes, and troubleshooting, see [README_DOCKER.md](./README_DOCKER.md).
