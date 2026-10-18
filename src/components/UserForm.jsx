@@ -1,15 +1,37 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { FileText, ArrowLeft } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 export default function UserForm() {
-  // 1. useState: Store form field values
+  const {
+    user,
+    setUser,
+    currentAssessment,
+    saveAssessment,
+    triggerNotification,
+    setActiveTab
+  } = useApp();
+
+  // 1. useState: Store form field values prefilled from global user profile
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    age: ''
+    name: user?.name || currentAssessment?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    age: user?.age || currentAssessment?.age || ''
   });
+
+  // Keep form hydrated if user profile updates in context
+  React.useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || currentAssessment?.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        age: user.age || currentAssessment?.age || ''
+      });
+    }
+  }, [user, currentAssessment]);
 
   // 2. useState: Store validation error messages for each field
   const [errors, setErrors] = useState({});
@@ -20,17 +42,17 @@ export default function UserForm() {
   // Handle input changes dynamically using the input's "name" attribute
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value
-    });
+    }));
 
     // Clear error message for this field when user starts typing
     if (errors[name]) {
-      setErrors({
-        ...errors,
+      setErrors((prev) => ({
+        ...prev,
         [name]: ''
-      });
+      }));
     }
   };
 
@@ -66,9 +88,9 @@ export default function UserForm() {
 
     // 4. Age validation: Only numbers and between 1 and 100
     const ageRegex = /^[0-9]+$/;
-    if (!formData.age.trim()) {
+    if (!formData.age.toString().trim()) {
       newErrors.age = 'Age is required';
-    } else if (!ageRegex.test(formData.age.trim())) {
+    } else if (!ageRegex.test(formData.age.toString().trim())) {
       newErrors.age = 'Age must contain numbers only';
     } else {
       const ageNum = parseInt(formData.age, 10);
@@ -82,30 +104,63 @@ export default function UserForm() {
       setErrors(newErrors);
       setSuccessMessage('');
     } else {
-      // If all fields are valid, show success message and clear errors
+      // If all fields are valid, synchronize with global user state & assessment
+      const parsedAge = parseInt(formData.age, 10);
+      const cleanName = formData.name.trim();
+      const cleanEmail = formData.email.trim();
+      const cleanPhone = formData.phone.trim();
+
+      const updatedUser = {
+        ...user,
+        name: cleanName,
+        email: cleanEmail,
+        phone: cleanPhone,
+        age: parsedAge,
+        avatarInitial: cleanName.charAt(0).toUpperCase(),
+        healthProfileComplete: 100
+      };
+
+      setUser(updatedUser);
+
+      try {
+        localStorage.setItem('skingen_current_user', JSON.stringify(updatedUser));
+        if (cleanEmail) {
+          const savedUsers = JSON.parse(localStorage.getItem('skingen_users_db') || '{}');
+          savedUsers[cleanEmail.toLowerCase()] = updatedUser;
+          localStorage.setItem('skingen_users_db', JSON.stringify(savedUsers));
+        }
+      } catch (err) {
+        console.error('Error persisting user form profile:', err);
+      }
+
+      if (currentAssessment) {
+        saveAssessment({
+          ...currentAssessment,
+          name: cleanName,
+          age: parsedAge
+        });
+      }
+
       setErrors({});
-      setSuccessMessage('Form submitted successfully!');
+      setSuccessMessage('Patient clinical record updated and synchronized across all views!');
+      triggerNotification('Clinical profile updated & synchronized successfully!');
     }
   };
 
   return (
-    <div
-      style={{
-        maxWidth: '520px',
-        margin: '20px auto',
-        padding: '28px',
-        backgroundColor: '#ffffff',
-        borderRadius: '12px',
-        border: '1px solid #e2e8f0',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-        fontFamily: 'inherit'
-      }}
-    >
-      <h2 style={{ fontSize: '22px', fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>
-        User Details
-      </h2>
-      <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '22px' }}>
-        Demonstration of React form handling, regex validation, and preventDefault().
+    <div className="card-panel" style={{ maxWidth: '640px', margin: '0 auto' }}>
+      <div className="card-panel-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <FileText size={22} color="#275941" />
+          <h3>User Details & Clinical Profile</h3>
+        </div>
+        <button className="btn-secondary" onClick={() => setActiveTab('dashboard')}>
+          <ArrowLeft size={14} style={{ marginRight: '4px' }} /> Dashboard
+        </button>
+      </div>
+
+      <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '22px' }}>
+        Complete your patient profile for calibrated clinical assessments and hereditary risk records.
       </p>
 
       {/* Success Message Banner */}
@@ -129,33 +184,17 @@ export default function UserForm() {
       {/* Form with onSubmit */}
       <form onSubmit={handleSubmit}>
         {/* Name Input */}
-        <div style={{ marginBottom: '16px' }}>
-          <label
-            style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: 500,
-              color: '#334155',
-              marginBottom: '6px'
-            }}
-          >
-            Name
-          </label>
+        <div className="form-group">
+          <label className="form-label" htmlFor="user-field-name">Full Name</label>
           <input
+            id="user-field-name"
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter your full name"
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              fontSize: '14px',
-              borderRadius: '6px',
-              border: errors.name ? '1px solid #ef4444' : '1px solid #cbd5e1',
-              outline: 'none',
-              boxSizing: 'border-box'
-            }}
+            placeholder="e.g. Your Full Name"
+            className="form-input"
+            style={{ borderColor: errors.name ? '#ef4444' : undefined }}
           />
           {errors.name && (
             <p style={{ color: '#ef4444', fontSize: '12px', margin: '4px 0 0 0' }}>
@@ -165,33 +204,17 @@ export default function UserForm() {
         </div>
 
         {/* Email Input */}
-        <div style={{ marginBottom: '16px' }}>
-          <label
-            style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: 500,
-              color: '#334155',
-              marginBottom: '6px'
-            }}
-          >
-            Email
-          </label>
+        <div className="form-group">
+          <label className="form-label" htmlFor="user-field-email">Email Address</label>
           <input
+            id="user-field-email"
             type="text"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="e.g. user@example.com"
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              fontSize: '14px',
-              borderRadius: '6px',
-              border: errors.email ? '1px solid #ef4444' : '1px solid #cbd5e1',
-              outline: 'none',
-              boxSizing: 'border-box'
-            }}
+            placeholder="e.g. name@example.com"
+            className="form-input"
+            style={{ borderColor: errors.email ? '#ef4444' : undefined }}
           />
           {errors.email && (
             <p style={{ color: '#ef4444', fontSize: '12px', margin: '4px 0 0 0' }}>
@@ -201,33 +224,17 @@ export default function UserForm() {
         </div>
 
         {/* Phone Number Input */}
-        <div style={{ marginBottom: '16px' }}>
-          <label
-            style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: 500,
-              color: '#334155',
-              marginBottom: '6px'
-            }}
-          >
-            Phone Number
-          </label>
+        <div className="form-group">
+          <label className="form-label" htmlFor="user-field-phone">Phone Number</label>
           <input
+            id="user-field-phone"
             type="text"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            placeholder="Enter 10-digit mobile number"
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              fontSize: '14px',
-              borderRadius: '6px',
-              border: errors.phone ? '1px solid #ef4444' : '1px solid #cbd5e1',
-              outline: 'none',
-              boxSizing: 'border-box'
-            }}
+            placeholder="e.g. 9876543210"
+            className="form-input"
+            style={{ borderColor: errors.phone ? '#ef4444' : undefined }}
           />
           {errors.phone && (
             <p style={{ color: '#ef4444', fontSize: '12px', margin: '4px 0 0 0' }}>
@@ -237,33 +244,17 @@ export default function UserForm() {
         </div>
 
         {/* Age Input */}
-        <div style={{ marginBottom: '22px' }}>
-          <label
-            style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: 500,
-              color: '#334155',
-              marginBottom: '6px'
-            }}
-          >
-            Age
-          </label>
+        <div className="form-group">
+          <label className="form-label" htmlFor="user-field-age">Age (Years)</label>
           <input
+            id="user-field-age"
             type="text"
             name="age"
             value={formData.age}
             onChange={handleChange}
-            placeholder="Enter age (1 - 100)"
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              fontSize: '14px',
-              borderRadius: '6px',
-              border: errors.age ? '1px solid #ef4444' : '1px solid #cbd5e1',
-              outline: 'none',
-              boxSizing: 'border-box'
-            }}
+            placeholder="e.g. 25"
+            className="form-input"
+            style={{ borderColor: errors.age ? '#ef4444' : undefined }}
           />
           {errors.age && (
             <p style={{ color: '#ef4444', fontSize: '12px', margin: '4px 0 0 0' }}>
@@ -275,35 +266,29 @@ export default function UserForm() {
         {/* Submit Button */}
         <button
           type="submit"
-          style={{
-            width: '100%',
-            padding: '12px',
-            backgroundColor: '#275941',
-            color: '#ffffff',
-            fontSize: '14px',
-            fontWeight: 600,
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            transition: 'background-color 0.2s'
-          }}
+          className="btn-primary"
+          style={{ width: '100%', justifyContent: 'center', marginTop: '12px' }}
         >
-          Submit
+          Save Clinical Profile
         </button>
 
         {/* Navigation Link back to Home */}
         <div style={{ textAlign: 'center', marginTop: '16px' }}>
-          <Link
-            to="/"
+          <button
+            type="button"
+            onClick={() => setActiveTab('dashboard')}
             style={{
-              color: '#275941',
+              background: 'none',
+              border: 'none',
+              color: 'var(--primary-forest)',
               fontSize: '13px',
               textDecoration: 'none',
-              fontWeight: 500
+              fontWeight: 600,
+              cursor: 'pointer'
             }}
           >
-            ← Back to Home
-          </Link>
+            ← Back to Dashboard
+          </button>
         </div>
       </form>
     </div>

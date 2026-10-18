@@ -1,31 +1,22 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
-  Sparkles,
   ArrowLeft,
   Sun,
   Moon,
-  ShieldAlert,
-  Droplet,
-  CheckCircle2,
-  RefreshCw,
-  Share2,
-  Download
+  Download,
+  Share2
 } from 'lucide-react';
 // // useContext: Accessing global assessment results and navigation
 import { useApp } from '../context/AppContext';
 import { getSkinRecommendations } from '../utils/skinScoreCalculator';
 
 export default function AssessmentResult() {
-  // // useContext: Consuming assessment results from AppContext
-  const { currentAssessment, setActiveTab, triggerNotification } = useApp();
-
-  // // useState: Active tab for routine viewer (AM vs PM vs Care Plan)
-  const [activeRoutineTab, setActiveRoutineTab] = useState('am');
+  const { user, currentAssessment, setActiveTab, triggerNotification } = useApp();
 
   const score = currentAssessment?.score || 62;
   const riskLevel = currentAssessment?.riskLevel || 'Moderate';
   const skinType = currentAssessment?.skinType || 'Combination';
-  const userName = currentAssessment?.name || 'Jeet';
+  const userName = currentAssessment?.name || user?.name || 'Patient';
 
   // useMemo: Formats recommendation guidelines based on score and skin type
   const routines = useMemo(() => {
@@ -34,8 +25,25 @@ export default function AssessmentResult() {
 
   return (
     <div className="result-container">
-      {/* Top Back Action Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* Printed Document Header (Visible only when printed) */}
+      <div className="print-report-header">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #235d40', paddingBottom: '12px', marginBottom: '20px' }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: '24px', color: '#13281e' }}>SkinGen Clinical Dermatology Report</h1>
+            <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#55695e' }}>
+              Precision barrier health evaluation & automated regimen formulation
+            </p>
+          </div>
+          <div style={{ textAlign: 'right', fontSize: '12px', color: '#55695e' }}>
+            <div><strong>Patient:</strong> {userName}</div>
+            <div><strong>Date:</strong> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+            <div><strong>Status:</strong> Verified Clinical Assessment</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Top Back Action Bar (Hidden on print) */}
+      <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <button
           className="btn-secondary"
           onClick={() => setActiveTab('assessment')}
@@ -136,24 +144,19 @@ export default function AssessmentResult() {
           <span style={{ fontSize: '12px', color: '#6b7a72' }}>Evidence-based dermatology protocol</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+        <div className="lifestyle-actions-grid">
           {routines.actions.map((act, i) => (
             <div
               key={i}
-              style={{
-                border: '1px solid #e5ece6',
-                borderRadius: '12px',
-                padding: '16px',
-                backgroundColor: '#fbfdfa'
-              }}
+              className="action-step-card"
             >
-              <div style={{ fontSize: '10px', fontWeight: 700, color: '#226f43', textTransform: 'uppercase', marginBottom: '4px' }}>
+              <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase', marginBottom: '4px' }}>
                 {act.tag}
               </div>
-              <h4 style={{ fontSize: '13.5px', fontWeight: 700, color: '#121f18', marginBottom: '6px' }}>
+              <h4 style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
                 {act.title}
               </h4>
-              <p style={{ fontSize: '12px', color: '#5e6f65', lineHeight: 1.4 }}>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
                 {act.desc}
               </p>
             </div>

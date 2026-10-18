@@ -53,23 +53,23 @@ export function CarePlansView() {
           <ArrowLeft size={14} style={{ marginRight: '4px' }} /> Dashboard
         </button>
       </div>
-      <p style={{ fontSize: '13.5px', color: '#5e6f65', lineHeight: 1.6, marginBottom: '20px' }}>
+      <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '20px' }}>
         Dermatologist-formulated regimens synchronized with your daily lifestyle and climate factors.
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <div style={{ border: '1px solid #e5ece6', borderRadius: '12px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-app)' }}>
           <div>
-            <h4 style={{ fontSize: '14px', fontWeight: 700 }}>Barrier Restoration Protocol</h4>
-            <p style={{ fontSize: '12px', color: '#6b7a72' }}>Morning broad-spectrum SPF 50+ paired with вечер squalane barrier hydration.</p>
+            <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-main)' }}>Barrier Restoration Protocol</h4>
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Morning broad-spectrum SPF 50+ paired with evening squalane barrier hydration.</p>
           </div>
           <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: '9999px', background: '#eaf4ee', color: '#166534' }}>
             Active
           </span>
         </div>
-        <div style={{ border: '1px solid #e5ece6', borderRadius: '12px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-app)' }}>
           <div>
-            <h4 style={{ fontSize: '14px', fontWeight: 700 }}>Periodic Lesion Photography Scan</h4>
-            <p style={{ fontSize: '12px', color: '#6b7a72' }}>Every 30 days - high-resolution dermoscopic comparison check.</p>
+            <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-main)' }}>Periodic Lesion Photography Scan</h4>
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Every 30 days - high-resolution dermoscopic comparison check.</p>
           </div>
           <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: '9999px', background: '#fef3c7', color: '#92400e' }}>
             Due in 2 days
@@ -81,7 +81,7 @@ export function CarePlansView() {
 }
 
 export function FamilyHistoryView() {
-  const { setActiveTab } = useApp();
+  const { setActiveTab, triggerNotification } = useApp();
   return (
     <div className="card-panel">
       <div className="card-panel-header">
@@ -93,15 +93,44 @@ export function FamilyHistoryView() {
           <ArrowLeft size={14} style={{ marginRight: '4px' }} /> Dashboard
         </button>
       </div>
-      <p style={{ fontSize: '13.5px', color: '#5e6f65', lineHeight: 1.6 }}>
+      <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '20px' }}>
         Track hereditary dermatological history across 3 generations to calibrate AI predisposition weights.
       </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
+        <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px', background: 'var(--bg-app)' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#15803d' }}>GENERATION 1 • PARENTAL</span>
+          <h4 style={{ fontSize: '14px', fontWeight: 700, marginTop: '6px', color: 'var(--text-main)' }}>Mother & Father Lineage</h4>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>No history of melanoma or atypical dysplastic nevi reported.</p>
+        </div>
+
+        <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px', background: 'var(--bg-app)' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#b45309' }}>GENERATION 2 • MATERNAL</span>
+          <h4 style={{ fontSize: '14px', fontWeight: 700, marginTop: '6px', color: 'var(--text-main)' }}>Maternal Grandfather</h4>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Phototype II skin; actinic keratosis history documented.</p>
+        </div>
+
+        <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px', background: 'var(--bg-app)' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#15803d' }}>GENERATION 2 • PATERNAL</span>
+          <h4 style={{ fontSize: '14px', fontWeight: 700, marginTop: '6px', color: 'var(--text-main)' }}>Paternal Grandparents</h4>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Negative for cutaneous malignancies.</p>
+        </div>
+      </div>
+
+      <div style={{ marginTop: '20px' }}>
+        <button
+          className="btn-secondary"
+          onClick={() => triggerNotification('Pedigree record entry prompt logged.')}
+        >
+          + Add Relative Medical History
+        </button>
+      </div>
     </div>
   );
 }
 
 export function ReportsView() {
-  const { setActiveTab } = useApp();
+  const { setActiveTab, currentAssessment } = useApp();
   return (
     <div className="card-panel">
       <div className="card-panel-header">
@@ -113,9 +142,35 @@ export function ReportsView() {
           <ArrowLeft size={14} style={{ marginRight: '4px' }} /> Dashboard
         </button>
       </div>
-      <p style={{ fontSize: '13.5px', color: '#5e6f65', lineHeight: 1.6 }}>
+      <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '20px' }}>
         Review your historic skin health assessments and export printable clinical PDF summaries.
       </p>
+
+      <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '18px', background: 'var(--bg-app)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#15803d' }}>LATEST AI DERMATOLOGICAL SCAN</span>
+          <h4 style={{ fontSize: '15px', fontWeight: 700, marginTop: '4px', color: 'var(--text-main)' }}>
+            Full Clinical Barrier Evaluation — Score: {currentAssessment?.score || 62}/100
+          </h4>
+          <p style={{ fontSize: '12.5px', color: 'var(--text-muted)' }}>
+            Classification: {currentAssessment?.riskLevel || 'Moderate'} Risk • Skin Type: {currentAssessment?.skinType || 'Combination'} • Date: {currentAssessment?.lastAssessmentDate || 'Recent'}
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            className="btn-primary"
+            onClick={() => setActiveTab('result')}
+          >
+            Open Full Report
+          </button>
+          <button
+            className="btn-secondary"
+            onClick={() => window.print()}
+          >
+            Print Summary
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

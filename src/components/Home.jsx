@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Dashboard from './Dashboard';
@@ -12,6 +13,9 @@ import {
   ReportsView
 } from './PlaceholderViews';
 import UserForm from './UserForm';
+import UserProfile from './UserProfile';
+import About from './About';
+import Settings from './Settings';
 // useContext: Accessing global state via custom hook useApp
 import { useApp } from '../context/AppContext';
 
@@ -38,6 +42,8 @@ export default function Home() {
     switch (activeTab) {
       case 'dashboard':
         return <Dashboard />;
+      case 'profile':
+        return <UserProfile />;
       case 'assessment':
         return <SkinAssessmentForm />;
       case 'userform':
@@ -52,6 +58,10 @@ export default function Home() {
         return <FamilyHistoryView />;
       case 'reports':
         return <ReportsView />;
+      case 'about':
+        return <About />;
+      case 'settings':
+        return <Settings />;
       default:
         return <Dashboard />;
     }
@@ -76,8 +86,8 @@ export default function Home() {
             </div>
           )}
 
-          {/* Active View Content */}
-          {renderCurrentView()}
+          {/* Active View Content: Render child route via Outlet, or fallback to state-driven view */}
+          <Outlet />
         </main>
       </div>
 

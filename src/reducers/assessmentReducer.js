@@ -5,8 +5,8 @@
 // ============================================================================
 
 export const initialFormState = {
-  name: 'Khushi',
-  age: 19,
+  name: '',
+  age: 24,
   skinType: 'Combination', // 'Normal' | 'Dry' | 'Oily' | 'Combination'
   waterIntake: 2.5,        // in Liters / day
   sunExposure: 2,          // hours / day
@@ -53,7 +53,7 @@ export function assessmentReducer(state, action) {
       // // useReducer: Action RESET_FORM restores form back to initial baseline
       return {
         ...initialFormState,
-        name: action.defaultName || 'Khushi'
+        name: action.defaultName || ''
       };
 
     case ASSESSMENT_ACTIONS.SET_FORM_DATA:

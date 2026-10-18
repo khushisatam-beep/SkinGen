@@ -19,12 +19,16 @@ import {
 import { useApp } from '../context/AppContext';
 
 export default function Dashboard() {
-  // useContext: Consuming shared assessment values from AppContext
-  const { currentAssessment, setActiveTab, triggerNotification } = useApp();
+  // useContext: Consuming shared assessment values, navigation, and persistent SPF state from AppContext
+  const {
+    currentAssessment,
+    setActiveTab,
+    triggerNotification,
+    spfConfirmed,
+    setSpfConfirmed
+  } = useApp();
 
-  // useState: Managing interactive checkmark state for daily action
-  const [spfConfirmed, setSpfConfirmed] = useState(false);
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState('all'); // 'all' | 'env' | 'analysis' | 'research'
 
   const score = currentAssessment?.score || 62;
   const riskLevel = currentAssessment?.riskLevel || 'Moderate';
@@ -39,7 +43,7 @@ export default function Dashboard() {
     const next = !spfConfirmed;
     setSpfConfirmed(next);
     triggerNotification(
-      next ? 'Daily SPF application confirmed for today!' : 'SPF application log unconfirmed.'
+      next ? 'Daily SPF 50+ photoprotection confirmed for today!' : 'SPF application log unconfirmed.'
     );
   };
 
@@ -116,13 +120,13 @@ export default function Dashboard() {
           <div className="gauge-wrapper-box">
             <div className="gauge-svg-container">
               <svg width="200" height="200" viewBox="0 0 200 200">
-                {/* Background Ring */}
+                {/* Background Ring (Dark-mode responsive via CSS variable) */}
                 <circle
                   cx="100"
                   cy="100"
                   r={radius}
                   fill="none"
-                  stroke="#edf3ee"
+                  stroke="var(--border-color)"
                   strokeWidth="22"
                 />
                 {/* Active Score Ring */}
@@ -131,7 +135,7 @@ export default function Dashboard() {
                   cy="100"
                   r={radius}
                   fill="none"
-                  stroke="#275941"
+                  stroke={score >= 75 ? '#15803d' : score >= 50 ? '#275941' : '#b91c1c'}
                   strokeWidth="22"
                   strokeDasharray={circumference}
                   strokeDashoffset={strokeDashoffset}
@@ -223,71 +227,88 @@ export default function Dashboard() {
       <section className="insights-panel">
         <div className="card-panel-header">
           <h3>Recent Health Insights</h3>
-          <button
-            className="header-link"
-            onClick={() => setActiveFilter(prev => prev === 'all' ? 'env' : 'all')}
-          >
-            <SlidersHorizontal size={14} />
-            <span>Filter</span>
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+              Showing: {activeFilter === 'all' ? 'All (3)' : activeFilter === 'env' ? 'Environmental' : activeFilter === 'analysis' ? 'Analysis' : 'Research'}
+            </span>
+            <button
+              className="header-link"
+              onClick={() =>
+                setActiveFilter((prev) =>
+                  prev === 'all' ? 'env' : prev === 'env' ? 'analysis' : prev === 'analysis' ? 'research' : 'all'
+                )
+              }
+              title="Cycle through insight categories"
+            >
+              <SlidersHorizontal size={14} />
+              <span>Filter</span>
+            </button>
+          </div>
         </div>
 
         <div className="insights-list">
-          {/* Insight 1: UV Exposure */}
-          <div className="insight-item">
-            <div className="insight-left">
-              <div className="insight-icon-box">
-                <Sun size={18} />
-              </div>
-              <div className="insight-text">
-                <h4>UV Exposure Advisory</h4>
-                <p>High UV index detected in your area today. Protective measures recommended.</p>
-              </div>
-            </div>
-            <div className="insight-meta">
-              <span className="insight-date">Today</span>
-              <span className="insight-badge">Environmental</span>
-            </div>
-          </div>
+          {(() => {
+            const items = [
+              {
+                id: 1,
+                category: 'env',
+                badge: 'Environmental',
+                icon: Sun,
+                title: 'UV Exposure Advisory',
+                desc: 'High UV index detected in your area today. Protective measures recommended.',
+                date: 'Today'
+              },
+              {
+                id: 2,
+                category: 'analysis',
+                badge: 'Analysis',
+                icon: SearchCheck,
+                title: 'Assessment Complete: Right Forearm',
+                desc: 'AI analysis complete. No significant changes detected since last scan.',
+                date: '2 days ago'
+              },
+              {
+                id: 3,
+                category: 'research',
+                badge: 'Research',
+                icon: BookOpen,
+                title: 'New Publication Relevant to Your Profile',
+                desc: 'Recent studies on hereditary melanoma added to knowledge base.',
+                date: '1 week ago'
+              }
+            ];
 
-          {/* Insight 2: Assessment Complete */}
-          <div className="insight-item">
-            <div className="insight-left">
-              <div className="insight-icon-box">
-                <SearchCheck size={18} />
-              </div>
-              <div className="insight-text">
-                <h4>Assessment Complete: Right Forearm</h4>
-                <p>AI analysis complete. No significant changes detected since last scan.</p>
-              </div>
-            </div>
-            <div className="insight-meta">
-              <span className="insight-date">2 days ago</span>
-              <span className="insight-badge">Analysis</span>
-            </div>
-          </div>
+            const displayed = activeFilter === 'all' ? items : items.filter((it) => it.category === activeFilter);
 
-          {/* Insight 3: Research Publication */}
-          <div className="insight-item">
-            <div className="insight-left">
-              <div className="insight-icon-box">
-                <BookOpen size={18} />
-              </div>
-              <div className="insight-text">
-                <h4>New Publication Relevant to Your Profile</h4>
-                <p>Recent studies on hereditary melanoma added to knowledge base.</p>
-              </div>
-            </div>
-            <div className="insight-meta">
-              <span className="insight-date">1 week ago</span>
-              <span className="insight-badge">Research</span>
-            </div>
-          </div>
+            return displayed.map((insight) => {
+              const IconComp = insight.icon;
+              return (
+                <div key={insight.id} className="insight-item">
+                  <div className="insight-left">
+                    <div className="insight-icon-box">
+                      <IconComp size={18} />
+                    </div>
+                    <div className="insight-text">
+                      <h4>{insight.title}</h4>
+                      <p>{insight.desc}</p>
+                    </div>
+                  </div>
+                  <div className="insight-meta">
+                    <span className="insight-date">{insight.date}</span>
+                    <span className="insight-badge">{insight.badge}</span>
+                  </div>
+                </div>
+              );
+            });
+          })()}
         </div>
 
         <button
           className="btn-view-all-insights"
-          onClick={() => triggerNotification('Displaying full archival insights and clinical references.')}
+          onClick={() => {
+            setActiveFilter('all');
+            triggerNotification('Displaying full archival clinical insights and recent environmental publications.');
+          }}
         >
           View All Insights
         </button>
@@ -297,10 +318,42 @@ export default function Dashboard() {
       <footer className="app-footer">
         <div>© 2026 SkinGen Professional Dermatological Guidance.</div>
         <div className="footer-links">
-          <a href="#privacy" onClick={(e) => e.preventDefault()}>Privacy Policy</a>
-          <a href="#terms" onClick={(e) => e.preventDefault()}>Terms of Service</a>
-          <a href="#disclaimer" onClick={(e) => e.preventDefault()}>Medical Disclaimer</a>
-          <a href="#contact" onClick={(e) => e.preventDefault()}>Contact</a>
+          <a
+            href="#privacy"
+            onClick={(e) => {
+              e.preventDefault();
+              triggerNotification('Privacy: All clinical data is encrypted in local state and not transferred to external servers.');
+            }}
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="#terms"
+            onClick={(e) => {
+              e.preventDefault();
+              triggerNotification('Terms: Platform for educational and preliminary dermatological screening.');
+            }}
+          >
+            Terms of Service
+          </a>
+          <a
+            href="#disclaimer"
+            onClick={(e) => {
+              e.preventDefault();
+              triggerNotification('Medical Disclaimer: Not a substitute for formal histological biopsy or physician review.');
+            }}
+          >
+            Medical Disclaimer
+          </a>
+          <a
+            href="mailto:support@skingen.ai"
+            onClick={(e) => {
+              e.preventDefault();
+              window.open('mailto:support@skingen.ai', '_blank');
+            }}
+          >
+            Contact
+          </a>
         </div>
       </footer>
     </div>

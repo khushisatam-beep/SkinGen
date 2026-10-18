@@ -4,20 +4,24 @@ import { Bell, HelpCircle, Sun, Moon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function Header() {
-  // // useContext: Extracting user profile and theme from AppContext
+  // // useContext: Extracting user profile, theme, and navigation from AppContext
   const {
     user,
     theme,
     toggleTheme,
-    setIsAuthModalOpen,
+    setActiveTab,
     triggerNotification
   } = useApp();
+
+  const trimmedName = user?.name ? user.name.trim() : '';
+  const displayName = trimmedName || 'User';
+  const initial = user?.avatarInitial || (trimmedName ? trimmedName.charAt(0).toUpperCase() : 'U');
 
   return (
     <header className="header">
       <div className="header-welcome">
         {/* User name provided globally via useContext */}
-        <h2>Welcome back, {user?.name || 'Khushi'}</h2>
+        <h2>{trimmedName ? `Welcome back, ${trimmedName}` : 'Welcome back'}</h2>
         <p>Here is your dermatological overview for today.</p>
       </div>
 
@@ -50,16 +54,19 @@ export default function Header() {
           <HelpCircle size={18} />
         </button>
 
-        {/* User Avatar & Profile Modal Trigger */}
+        {/* User Avatar & Profile Trigger */}
         <div
           className="user-avatar-btn"
-          onClick={() => setIsAuthModalOpen(true)}
-          title="User Account / Settings"
+          onClick={() => setActiveTab('profile')}
+          title="User Profile & Clinical Record"
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter') setActiveTab('profile'); }}
         >
           <div className="avatar-circle">
-            {user?.avatarInitial || 'J'}
+            {initial}
           </div>
-          <span className="user-name-label">{user?.name || 'Jeet'}</span>
+          <span className="user-name-label">{displayName}</span>
         </div>
       </div>
     </header>

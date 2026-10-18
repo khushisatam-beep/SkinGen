@@ -1,77 +1,65 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './components/Home';
+import Dashboard from './components/Dashboard';
+import SkinAssessmentForm from './components/SkinAssessmentForm';
+import AssessmentResult from './components/AssessmentResult';
 import UserForm from './components/UserForm';
+import UserProfile from './components/UserProfile';
 import About from './components/About';
+import Settings from './components/Settings';
+import AuthScreen from './components/AuthScreen';
+import {
+  HereditaryRiskView,
+  CarePlansView,
+  FamilyHistoryView,
+  ReportsView
+} from './components/PlaceholderViews';
+import { useApp } from './context/AppContext';
 
 export default function App() {
-  return (
-    <BrowserRouter>
-      {/* Simple Navigation Bar matching viva requirements: Home | User Form | About */}
-      <nav
-        style={{
-          backgroundColor: '#1b3b2b',
-          padding: '12px 24px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '16px',
-          color: '#ffffff',
-          fontSize: '14px',
-          fontWeight: 600,
-          borderBottom: '1px solid #142e21'
-        }}
-      >
-        <Link
-          to="/"
-          style={{
-            color: '#ffffff',
-            textDecoration: 'none'
-          }}
-        >
-          Home
-        </Link>
-        <span style={{ color: '#88a695' }}>|</span>
-        <Link
-          to="/form"
-          style={{
-            color: '#ffffff',
-            textDecoration: 'none'
-          }}
-        >
-          User Form
-        </Link>
-        <span style={{ color: '#88a695' }}>|</span>
-        <Link
-          to="/about"
-          style={{
-            color: '#ffffff',
-            textDecoration: 'none'
-          }}
-        >
-          About
-        </Link>
-      </nav>
-      <Routes>
-        <Route path="/" element={<Home />} />
+  const { isAuthenticated } = useApp();
 
-        <Route
-          path="/form"
-          element={
-            <div style={{ padding: '24px 16px', minHeight: 'calc(100vh - 50px)', backgroundColor: '#f4f7f5' }}>
-              <UserForm />
-            </div>
-          }
-        />
-        <Route
-          path="/about"
-          element={
-            <div style={{ padding: '24px 16px', minHeight: 'calc(100vh - 50px)', backgroundColor: '#f4f7f5' }}>
-              <About />
-            </div>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+  // Initial screen for unauthenticated users: Standalone Login screen (Dashboard hidden behind)
+  if (!isAuthenticated) {
+    return <AuthScreen />;
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={<Home />}>
+        {/* Default & Dashboard */}
+        <Route index element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
+
+        {/* Skin Assessment Flow & Results */}
+        <Route path="assessment" element={<SkinAssessmentForm />} />
+        <Route path="result" element={<AssessmentResult />} />
+        <Route path="results" element={<AssessmentResult />} />
+
+        {/* User Profile Page */}
+        <Route path="profile" element={<UserProfile />} />
+
+        {/* User Details Form (mapped to /user-details, /userform, and /form for backwards compatibility) */}
+        <Route path="userform" element={<UserForm />} />
+        <Route path="user-details" element={<UserForm />} />
+        <Route path="form" element={<UserForm />} />
+
+        {/* Specialty Clinical Views */}
+        <Route path="risk" element={<HereditaryRiskView />} />
+        <Route path="care" element={<CarePlansView />} />
+        <Route path="family" element={<FamilyHistoryView />} />
+        <Route path="reports" element={<ReportsView />} />
+
+        {/* Dedicated Settings Page */}
+        <Route path="settings" element={<Settings />} />
+
+        {/* Platform Information */}
+        <Route path="about" element={<About />} />
+
+        {/* Catch-all route */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
   );
 }

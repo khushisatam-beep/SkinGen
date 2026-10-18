@@ -9,6 +9,7 @@ import {
   Calendar,
   AlertCircle,
   ArrowRight,
+  ArrowLeft,
   ShieldCheck,
   Award
 } from 'lucide-react';
@@ -32,7 +33,7 @@ export default function SkinAssessmentForm() {
   // ==========================================================================
   const [formState, dispatch] = useReducer(assessmentReducer, {
     ...initialFormState,
-    name: user?.name || 'Khushi',
+    name: user?.name || currentAssessment?.name || '',
     skinType: currentAssessment?.skinType || 'Combination',
     age: currentAssessment?.age || 24,
     waterIntake: currentAssessment?.waterIntake || 2.5,
@@ -46,6 +47,7 @@ export default function SkinAssessmentForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formMessage, setFormMessage] = useState('');
   const [selectedPreset, setSelectedPreset] = useState(formState.waterIntake);
+  const [fieldErrors, setFieldErrors] = useState({});
 
   // ==========================================================================
   // 2. useEffect: Syncing with initial context data
@@ -76,12 +78,37 @@ export default function SkinAssessmentForm() {
     });
   }, [dispatch]);
 
+  // Validate Step 1 patient details
+  const validateStep1 = useCallback(() => {
+    const errs = {};
+    if (!formState.name.trim()) {
+      errs.name = 'Patient full name is required.';
+    }
+    const ageNum = parseInt(formState.age, 10);
+    if (!formState.age || isNaN(ageNum) || ageNum < 12 || ageNum > 100) {
+      errs.age = 'Please enter a valid age between 12 and 100.';
+    }
+    setFieldErrors(errs);
+    return Object.keys(errs).length === 0;
+  }, [formState.name, formState.age]);
+
+  // Step click navigation guard
+  const handleStepClick = (targetStep) => {
+    if (targetStep > 1 && !validateStep1()) {
+      setFormMessage('Please complete Step 1 patient details first.');
+      return;
+    }
+    setFormMessage('');
+    updateField('step', targetStep);
+  };
+
   // useCallback: Memoized reset form handler
   const handleReset = useCallback(() => {
     dispatch({
       type: ASSESSMENT_ACTIONS.RESET_FORM,
-      defaultName: user?.name || 'Khushi'
+      defaultName: user?.name || ''
     });
+    setFieldErrors({});
     setSelectedPreset(2.5);
     setFormMessage('Form reset back to default baseline values.');
     setTimeout(() => setFormMessage(''), 3000);
@@ -111,13 +138,10 @@ export default function SkinAssessmentForm() {
   const handleAssessmentSubmit = useCallback((e) => {
     e.preventDefault();
 
-    // Basic validation
-    if (!formState.name.trim()) {
-      setFormMessage('Please enter your name.');
-      return;
-    }
-    if (formState.age < 12 || formState.age > 100) {
-      setFormMessage('Please enter a valid age between 12 and 100.');
+    // Ensure step 1 is valid
+    if (!validateStep1()) {
+      updateField('step', 1);
+      setFormMessage('Please complete Step 1 patient details before submitting.');
       return;
     }
 
@@ -147,7 +171,7 @@ export default function SkinAssessmentForm() {
       // Navigate to results screen
       setActiveTab('result');
     }, 600);
-  }, [formState, liveAnalysis, recommendations, saveAssessment, setActiveTab]);
+  }, [formState, liveAnalysis, recommendations, saveAssessment, setActiveTab, validateStep1, updateField]);
 
   // Skin Type options with descriptions and icons
   const skinTypes = [
@@ -183,12 +207,12 @@ export default function SkinAssessmentForm() {
         </div>
       )}
 
-      {/* Stepper Header matching slice 2 */}
+      {/* Stepper Header with functional navigation */}
       <div className="stepper-nav">
         <button
           type="button"
           className={`step-pill ${formState.step === 1 ? 'active' : ''}`}
-          onClick={() => updateField('step', 1)}
+          onClick={() => handleStepClick(1)}
         >
           <span className="step-num">1</span>
           <span>Personal Info</span>
@@ -197,7 +221,7 @@ export default function SkinAssessmentForm() {
         <button
           type="button"
           className={`step-pill ${formState.step === 2 ? 'active' : ''}`}
-          onClick={() => updateField('step', 2)}
+          onClick={() => handleStepClick(2)}
         >
           <span className="step-num">2</span>
           <span>Skin Attributes</span>
@@ -206,7 +230,7 @@ export default function SkinAssessmentForm() {
         <button
           type="button"
           className={`step-pill ${formState.step === 3 ? 'active' : ''}`}
-          onClick={() => updateField('step', 3)}
+          onClick={() => handleStepClick(3)}
         >
           <span className="step-num">3</span>
           <span>Hydration & Lifestyle</span>
@@ -217,163 +241,239 @@ export default function SkinAssessmentForm() {
         <div className="form-grid-layout">
           {/* Main Form Body */}
           <div className="form-main-card">
-            {/* Step 1: Personal Info */}
-            <div className="form-section-title">
-              <User size={18} />
-              <span>Step 1: Patient Details</span>
-            </div>
+            {/* STEP 1: PERSONAL INFO */}
+            {formState.step === 1 && (
+              <div>
+                <div className="form-section-title">
+                  <User size={18} />
+                  <span>Step 1 of 3: Patient Details</span>
+                </div>
 
-            <div className="form-row-2">
-              <div className="form-group">
-                <label className="form-label" htmlFor="user-name">Your Full Name</label>
-                <input
-                  id="user-name"
-                  type="text"
-                  className="form-input"
-                  placeholder="e.g. Khushi Satam"
-                  value={formState.name}
-                  onChange={(e) => updateField('name', e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="user-age">Age (years)</label>
-                <input
-                  id="user-age"
-                  type="number"
-                  min="12"
-                  max="100"
-                  className="form-input"
-                  value={formState.age}
-                  onChange={(e) => updateField('age', e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Step 2: Skin Type Selector */}
-            <div className="form-section-title" style={{ marginTop: '20px' }}>
-              <ShieldCheck size={18} />
-              <span>Step 2: Select Skin Type</span>
-            </div>
-
-            <div className="skin-types-grid">
-              {skinTypes.map((type) => {
-                const isSelected = formState.skinType === type.id;
-                return (
-                  <div
-                    key={type.id}
-                    className={`skin-type-card ${isSelected ? 'selected' : ''}`}
-                    onClick={() => updateField('skinType', type.id)}
-                  >
-                    <div className="skin-card-top">
-                      <span className="skin-card-title">{type.label}</span>
-                      {isSelected && <CheckCircle2 size={16} color="#15803d" />}
-                    </div>
-                    <p className="skin-card-desc">{type.desc}</p>
+                <div className="form-row-2">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="user-name">Your Full Name</label>
+                    <input
+                      id="user-name"
+                      type="text"
+                      className="form-input"
+                      placeholder="e.g. Your Full Name"
+                      value={formState.name}
+                      onChange={(e) => {
+                        updateField('name', e.target.value);
+                        if (fieldErrors.name) setFieldErrors(prev => ({ ...prev, name: '' }));
+                      }}
+                      style={{ borderColor: fieldErrors.name ? '#ef4444' : undefined }}
+                      required
+                    />
+                    {fieldErrors.name && (
+                      <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>
+                        {fieldErrors.name}
+                      </p>
+                    )}
                   </div>
-                );
-              })}
-            </div>
 
-            {/* Step 3: Water Intake & Sun Exposure */}
-            <div className="form-section-title" style={{ marginTop: '28px' }}>
-              <Droplets size={18} />
-              <span>Step 3: Daily Water Intake & Sun Exposure</span>
-            </div>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="user-age">Age (years)</label>
+                    <input
+                      id="user-age"
+                      type="number"
+                      min="12"
+                      max="100"
+                      className="form-input"
+                      placeholder="e.g. 25"
+                      value={formState.age}
+                      onChange={(e) => {
+                        updateField('age', e.target.value);
+                        if (fieldErrors.age) setFieldErrors(prev => ({ ...prev, age: '' }));
+                      }}
+                      style={{ borderColor: fieldErrors.age ? '#ef4444' : undefined }}
+                      required
+                    />
+                    {fieldErrors.age && (
+                      <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>
+                        {fieldErrors.age}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-            <div className="form-group">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label className="form-label">Water Intake: {formState.waterIntake} Liters/Day</label>
-                <span style={{ fontSize: '11.5px', color: '#15803d', fontWeight: 600 }}>
-                  {formState.waterIntake >= 2.5 ? '✓ Optimal Hydration' : '⚠ Below Recommended'}
-                </span>
-              </div>
-              <input
-                type="range"
-                min="0.5"
-                max="4.5"
-                step="0.1"
-                className="range-slider"
-                value={formState.waterIntake}
-                onChange={(e) => {
-                  const val = parseFloat(e.target.value);
-                  updateField('waterIntake', val);
-                  setSelectedPreset(val);
-                }}
-              />
-              <div className="slider-labels">
-                <span>0.5 L (Dehydrated)</span>
-                <span>2.5 L (Standard)</span>
-                <span>4.5 L (High)</span>
-              </div>
-
-              {/* Quick Presets */}
-              <div className="quick-pills">
-                {[1.5, 2.0, 2.5, 3.0, 3.5].map((amt) => (
+                <div className="form-actions-bar" style={{ justifyContent: 'flex-end' }}>
                   <button
-                    key={amt}
                     type="button"
-                    className={`pill-btn ${selectedPreset === amt ? 'active' : ''}`}
+                    className="btn-primary"
                     onClick={() => {
-                      updateField('waterIntake', amt);
-                      setSelectedPreset(amt);
+                      if (validateStep1()) {
+                        updateField('step', 2);
+                      }
                     }}
                   >
-                    {amt}L
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="form-group" style={{ marginTop: '20px' }}>
-              <label className="form-label">
-                Sun Exposure: {formState.sunExposure} Hour{formState.sunExposure > 1 ? 's' : ''} / Day
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="8"
-                step="0.5"
-                className="range-slider"
-                value={formState.sunExposure}
-                onChange={(e) => updateField('sunExposure', parseFloat(e.target.value))}
-              />
-              <div className="slider-labels">
-                <span>0 hrs (Indoor)</span>
-                <span>3 hrs</span>
-                <span>8+ hrs (High UV)</span>
-              </div>
-            </div>
-
-            {/* Bottom Actions Bar */}
-            <div className="form-actions-bar">
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={handleReset}
-                title="Reset form state using useReducer"
-              >
-                <RotateCcw size={15} style={{ marginRight: '6px' }} />
-                Reset Form
-              </button>
-
-              <button
-                type="submit"
-                className="btn-primary"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <span>Analyzing...</span>
-                ) : (
-                  <>
-                    <span>Analyze My Skin</span>
+                    <span>Next: Skin Attributes</span>
                     <ArrowRight size={16} />
-                  </>
-                )}
-              </button>
-            </div>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2: SKIN TYPE SELECTOR */}
+            {formState.step === 2 && (
+              <div>
+                <div className="form-section-title">
+                  <ShieldCheck size={18} />
+                  <span>Step 2 of 3: Select Skin Type</span>
+                </div>
+
+                <div className="skin-types-grid">
+                  {skinTypes.map((type) => {
+                    const isSelected = formState.skinType === type.id;
+                    return (
+                      <div
+                        key={type.id}
+                        className={`skin-type-card ${isSelected ? 'selected' : ''}`}
+                        onClick={() => updateField('skinType', type.id)}
+                      >
+                        <div className="skin-card-top">
+                          <span className="skin-card-title">{type.label}</span>
+                          {isSelected && <CheckCircle2 size={16} color="#15803d" />}
+                        </div>
+                        <p className="skin-card-desc">{type.desc}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="form-actions-bar" style={{ justifyContent: 'space-between' }}>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => updateField('step', 1)}
+                  >
+                    <ArrowLeft size={15} style={{ marginRight: '6px' }} />
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    onClick={() => updateField('step', 3)}
+                  >
+                    <span>Next: Hydration & Lifestyle</span>
+                    <ArrowRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 3: WATER INTAKE & SUN EXPOSURE */}
+            {formState.step === 3 && (
+              <div>
+                <div className="form-section-title">
+                  <Droplets size={18} />
+                  <span>Step 3 of 3: Daily Water Intake & Sun Exposure</span>
+                </div>
+
+                <div className="form-group">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label className="form-label">Water Intake: {formState.waterIntake} Liters/Day</label>
+                    <span style={{ fontSize: '11.5px', color: '#15803d', fontWeight: 600 }}>
+                      {formState.waterIntake >= 2.5 ? '✓ Optimal Hydration' : '⚠ Below Recommended'}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="4.5"
+                    step="0.1"
+                    className="range-slider"
+                    value={formState.waterIntake}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      updateField('waterIntake', val);
+                      setSelectedPreset(val);
+                    }}
+                  />
+                  <div className="slider-labels">
+                    <span>0.5 L (Dehydrated)</span>
+                    <span>2.5 L (Standard)</span>
+                    <span>4.5 L (High)</span>
+                  </div>
+
+                  {/* Quick Presets */}
+                  <div className="quick-pills">
+                    {[1.5, 2.0, 2.5, 3.0, 3.5].map((amt) => (
+                      <button
+                        key={amt}
+                        type="button"
+                        className={`pill-btn ${selectedPreset === amt ? 'active' : ''}`}
+                        onClick={() => {
+                          updateField('waterIntake', amt);
+                          setSelectedPreset(amt);
+                        }}
+                      >
+                        {amt}L
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="form-group" style={{ marginTop: '20px' }}>
+                  <label className="form-label">
+                    Sun Exposure: {formState.sunExposure} Hour{formState.sunExposure > 1 ? 's' : ''} / Day
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="8"
+                    step="0.5"
+                    className="range-slider"
+                    value={formState.sunExposure}
+                    onChange={(e) => updateField('sunExposure', parseFloat(e.target.value))}
+                  />
+                  <div className="slider-labels">
+                    <span>0 hrs (Indoor)</span>
+                    <span>3 hrs</span>
+                    <span>8+ hrs (High UV)</span>
+                  </div>
+                </div>
+
+                {/* Bottom Actions Bar */}
+                <div className="form-actions-bar" style={{ justifyContent: 'space-between' }}>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => updateField('step', 2)}
+                  >
+                    <ArrowLeft size={15} style={{ marginRight: '6px' }} />
+                    Back
+                  </button>
+
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={handleReset}
+                      title="Reset form state using useReducer"
+                    >
+                      <RotateCcw size={15} style={{ marginRight: '6px' }} />
+                      Reset Form
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="btn-primary"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <span>Analyzing...</span>
+                      ) : (
+                        <>
+                          <span>Analyze My Skin</span>
+                          <ArrowRight size={16} />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column: AI Live Pre-screening Summary */}

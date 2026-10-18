@@ -9,9 +9,9 @@ export default function AuthModal() {
 
   // // useState: Modal tab, inputs, and checkbox
   const [activeTab, setActiveTab] = useState('login'); // 'login' | 'signup'
-  const [email, setEmail] = useState(user?.email || 'jeet.patel@skingen.ai');
-  const [name, setName] = useState(user?.name || 'Jeet');
-  const [password, setPassword] = useState('••••••••');
+  const [email, setEmail] = useState(user?.email || '');
+  const [name, setName] = useState(user?.name || '');
+  const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
 
   if (!isAuthModalOpen) return null;
@@ -77,7 +77,7 @@ export default function AuthModal() {
               className="auth-input"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Jeet"
+              placeholder="e.g. Your Full Name"
               required
             />
           </div>
@@ -91,7 +91,7 @@ export default function AuthModal() {
               className="auth-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              placeholder="e.g. name@example.com"
               required
             />
           </div>
