@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build: .
+    container_name: skingen-frontend
+    command: npm run dev -- --host 0.0.0.0
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  server:
+    build: .
+    container_name: skingen-server
+    command: npm run server
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
