@@ -1,0 +1,32 @@
+.env.*
+!.env.example
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+*.h.tsv.gz
+*.vcf
+*.vcf.gz
+*.bed
+*.bim
+*.fam
+*.log
+.DS_Store
+
+# Local environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Local environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Exclude old project backups
+old/
+
+# Exclude temporary patch instructions
+PATCH-INSTRUCTIONS.txt

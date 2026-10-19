@@ -1,0 +1,759 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/api/v1/model-comparison",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "model_version": "3.0.0",
+      "seed": 42,
+      "data": {
+        "name": "UCI Dermatology (erythemato-squamous diseases)",
+        "doi": "10.24432/C5FK5P",
+        "authors": "Nilsel Ilter, H. Altay Guvenir (1998)",
+        "download_url": "https://raw.githubusercontent.com/syedmabusubhani/Skin_Disorder_Project/4a737ef479004d525b42f5efc5c8143c161de1c9/skin_disorder.csv",
+        "sha256": "4c398eba26590ea7daad1c8405f971a669da5fc6f880d69dfdeea610c1c2f68b",
+        "real_data": true,
+        "rows": 366,
+        "dataset_classes": {
+          "1": 112,
+          "2": 61,
+          "3": 72,
+          "4": 49,
+          "5": 52,
+          "6": 20
+        },
+        "grouped_class_counts": {
+          "psoriasis": 112,
+          "seborrheic_dermatitis": 61,
+          "chronic_dermatitis": 52,
+          "other_scaly_rash": 141
+        },
+        "missing_values": {
+          "Age": 8
+        },
+        "features_not_used": "the 22 histopathology (biopsy) columns - a person cannot supply them"
+      },
+      "split": {
+        "test_fraction": 0.2,
+        "stratified": true,
+        "seed": 42,
+        "train_rows": 292,
+        "test_rows": 74
+      },
+      "selection_rule": "lowest mean repeated-CV log loss on the 80% training split (MajorityBaseline excluded)",
+      "chosen_model": "LogisticRegression",
+      "candidates": {
+        "MajorityBaseline": {
+          "params": {
+            "constant": null,
+            "random_state": null,
+            "strategy": "prior"
+          },
+          "cv_on_training_split": {
+            "accuracy": {
+              "mean": 0.3869666861484512,
+              "sd": 0.006715877228391938
+            },
+            "balanced_accuracy": {
+              "mean": 0.25,
+              "sd": 0
+            },
+            "macro_f1": {
+              "mean": 0.1394926227040048,
+              "sd": 0.0017454891823285201
+            },
+            "roc_auc_ovr_macro": {
+              "mean": 0.5,
+              "sd": 0
+            },
+            "log_loss": {
+              "mean": 1.3049741451471568,
+              "sd": 0.009347745935283924
+            }
+          },
+          "cv_out_of_fold_calibration": [
+            {
+              "n": 59,
+              "mean_confidence": 0.3846433627476764,
+              "accuracy": 0.4067796610169492
+            },
+            {
+              "n": 59,
+              "mean_confidence": 0.38626609442060084,
+              "accuracy": 0.423728813559322
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.38626609442060084,
+              "accuracy": 0.3448275862068966
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.3888888888888889,
+              "accuracy": 0.3793103448275862
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.3888888888888889,
+              "accuracy": 0.3793103448275862
+            }
+          ],
+          "cv_out_of_fold_ece": 0.024078378817046588,
+          "test_holdout": {
+            "n": 74,
+            "accuracy": 0.3783783783783784,
+            "balanced_accuracy": 0.25,
+            "macro_f1": 0.13725490196078433,
+            "roc_auc_ovr_macro": 0.5,
+            "log_loss": 1.3097722922836919,
+            "brier_multiclass": 0.712043484655607,
+            "per_class": {
+              "psoriasis": {
+                "precision": 0,
+                "recall": 0,
+                "f1": 0,
+                "support": 23
+              },
+              "seborrheic_dermatitis": {
+                "precision": 0,
+                "recall": 0,
+                "f1": 0,
+                "support": 12
+              },
+              "chronic_dermatitis": {
+                "precision": 0,
+                "recall": 0,
+                "f1": 0,
+                "support": 11
+              },
+              "other_scaly_rash": {
+                "precision": 0.3783783783783784,
+                "recall": 1,
+                "f1": 0.5490196078431373,
+                "support": 28
+              }
+            },
+            "confusion_matrix": {
+              "labels": [
+                "psoriasis",
+                "seborrheic_dermatitis",
+                "chronic_dermatitis",
+                "other_scaly_rash"
+              ],
+              "rows_true_cols_pred": [
+                [
+                  0,
+                  0,
+                  0,
+                  23
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  12
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  11
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  28
+                ]
+              ]
+            },
+            "confidence_ece": 0.13254350240651616,
+            "confidence_calibration_table": [
+              {
+                "n": 15,
+                "mean_confidence": 0.3869863013698629,
+                "accuracy": 0.5333333333333333
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.3869863013698629,
+                "accuracy": 0.4
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.3869863013698629,
+                "accuracy": 0.13333333333333333
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.3869863013698629,
+                "accuracy": 0.5333333333333333
+              },
+              {
+                "n": 14,
+                "mean_confidence": 0.38698630136986295,
+                "accuracy": 0.2857142857142857
+              }
+            ]
+          }
+        },
+        "LogisticRegression": {
+          "params": {
+            "C": 1,
+            "class_weight": null,
+            "dual": false,
+            "fit_intercept": true,
+            "intercept_scaling": 1,
+            "l1_ratio": null,
+            "max_iter": 5000,
+            "multi_class": "deprecated",
+            "n_jobs": null,
+            "penalty": "l2",
+            "random_state": null,
+            "solver": "lbfgs",
+            "tol": 0.0001,
+            "verbose": 0,
+            "warm_start": false
+          },
+          "cv_on_training_split": {
+            "accuracy": {
+              "mean": 0.8743035262030002,
+              "sd": 0.04875499424087058
+            },
+            "balanced_accuracy": {
+              "mean": 0.8478896057764344,
+              "sd": 0.0535018256406447
+            },
+            "macro_f1": {
+              "mean": 0.8446097428837832,
+              "sd": 0.05384502522555213
+            },
+            "roc_auc_ovr_macro": {
+              "mean": 0.9728498061762061,
+              "sd": 0.01345914173205211
+            },
+            "log_loss": {
+              "mean": 0.35834561693330075,
+              "sd": 0.09082656017640024
+            }
+          },
+          "cv_out_of_fold_calibration": [
+            {
+              "n": 59,
+              "mean_confidence": 0.5550296207042423,
+              "accuracy": 0.5084745762711864
+            },
+            {
+              "n": 59,
+              "mean_confidence": 0.7909814062141768,
+              "accuracy": 0.8813559322033898
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.9436019223554084,
+              "accuracy": 0.9482758620689655
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.99375777221163,
+              "accuracy": 1
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.9997838729828332,
+              "accuracy": 1
+            }
+          ],
+          "cv_out_of_fold_ece": 0.029878485400757927,
+          "test_holdout": {
+            "n": 74,
+            "accuracy": 0.8378378378378378,
+            "balanced_accuracy": 0.8099237718802935,
+            "macro_f1": 0.8057359307359307,
+            "roc_auc_ovr_macro": 0.9638192515095204,
+            "log_loss": 0.45585752666498197,
+            "brier_multiclass": 0.21792851682971065,
+            "per_class": {
+              "psoriasis": {
+                "precision": 0.9523809523809523,
+                "recall": 0.8695652173913043,
+                "f1": 0.9090909090909091,
+                "support": 23
+              },
+              "seborrheic_dermatitis": {
+                "precision": 0.5625,
+                "recall": 0.75,
+                "f1": 0.6428571428571429,
+                "support": 12
+              },
+              "chronic_dermatitis": {
+                "precision": 0.8,
+                "recall": 0.7272727272727273,
+                "f1": 0.7619047619047619,
+                "support": 11
+              },
+              "other_scaly_rash": {
+                "precision": 0.9259259259259259,
+                "recall": 0.8928571428571429,
+                "f1": 0.9090909090909091,
+                "support": 28
+              }
+            },
+            "confusion_matrix": {
+              "labels": [
+                "psoriasis",
+                "seborrheic_dermatitis",
+                "chronic_dermatitis",
+                "other_scaly_rash"
+              ],
+              "rows_true_cols_pred": [
+                [
+                  20,
+                  3,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  9,
+                  1,
+                  2
+                ],
+                [
+                  0,
+                  3,
+                  8,
+                  0
+                ],
+                [
+                  1,
+                  1,
+                  1,
+                  25
+                ]
+              ]
+            },
+            "confidence_ece": 0.047149010077151395,
+            "confidence_calibration_table": [
+              {
+                "n": 15,
+                "mean_confidence": 0.5573896485680485,
+                "accuracy": 0.4
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.8107563625963748,
+                "accuracy": 0.8666666666666667
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.9498853719326951,
+                "accuracy": 0.9333333333333333
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.9973065260459123,
+                "accuracy": 1
+              },
+              {
+                "n": 14,
+                "mean_confidence": 0.999939659440546,
+                "accuracy": 1
+              }
+            ]
+          }
+        },
+        "RandomForest": {
+          "params": {
+            "bootstrap": true,
+            "ccp_alpha": 0,
+            "class_weight": null,
+            "criterion": "gini",
+            "max_depth": null,
+            "max_features": "sqrt",
+            "max_leaf_nodes": null,
+            "max_samples": null,
+            "min_impurity_decrease": 0,
+            "min_samples_leaf": 2,
+            "min_samples_split": 2,
+            "min_weight_fraction_leaf": 0,
+            "monotonic_cst": null,
+            "n_estimators": 300,
+            "n_jobs": 1,
+            "oob_score": false,
+            "random_state": 42,
+            "verbose": 0,
+            "warm_start": false
+          },
+          "cv_on_training_split": {
+            "accuracy": {
+              "mean": 0.8698227157607636,
+              "sd": 0.04599094381224829
+            },
+            "balanced_accuracy": {
+              "mean": 0.8446409857311392,
+              "sd": 0.05877359984154971
+            },
+            "macro_f1": {
+              "mean": 0.8390394649158497,
+              "sd": 0.05813858720623044
+            },
+            "roc_auc_ovr_macro": {
+              "mean": 0.9661681362144995,
+              "sd": 0.018019707081891996
+            },
+            "log_loss": {
+              "mean": 0.44135649741690436,
+              "sd": 0.07203731594213596
+            }
+          },
+          "cv_out_of_fold_calibration": [
+            {
+              "n": 59,
+              "mean_confidence": 0.4776997350666036,
+              "accuracy": 0.6779661016949152
+            },
+            {
+              "n": 59,
+              "mean_confidence": 0.6404580300027913,
+              "accuracy": 0.8305084745762712
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.788137444732309,
+              "accuracy": 0.9482758620689655
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.9091496664386873,
+              "accuracy": 0.9655172413793104
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.9864043713395121,
+              "accuracy": 1
+            }
+          ],
+          "cv_out_of_fold_ece": 0.12457049957293223,
+          "test_holdout": {
+            "n": 74,
+            "accuracy": 0.8648648648648649,
+            "balanced_accuracy": 0.8396856766421985,
+            "macro_f1": 0.83374861572536,
+            "roc_auc_ovr_macro": 0.9540654015016691,
+            "log_loss": 0.4767377143933114,
+            "brier_multiclass": 0.24246950320137978,
+            "per_class": {
+              "psoriasis": {
+                "precision": 1,
+                "recall": 0.8695652173913043,
+                "f1": 0.9302325581395349,
+                "support": 23
+              },
+              "seborrheic_dermatitis": {
+                "precision": 0.625,
+                "recall": 0.8333333333333334,
+                "f1": 0.7142857142857143,
+                "support": 12
+              },
+              "chronic_dermatitis": {
+                "precision": 0.8,
+                "recall": 0.7272727272727273,
+                "f1": 0.7619047619047619,
+                "support": 11
+              },
+              "other_scaly_rash": {
+                "precision": 0.9285714285714286,
+                "recall": 0.9285714285714286,
+                "f1": 0.9285714285714286,
+                "support": 28
+              }
+            },
+            "confusion_matrix": {
+              "labels": [
+                "psoriasis",
+                "seborrheic_dermatitis",
+                "chronic_dermatitis",
+                "other_scaly_rash"
+              ],
+              "rows_true_cols_pred": [
+                [
+                  20,
+                  2,
+                  0,
+                  1
+                ],
+                [
+                  0,
+                  10,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  3,
+                  8,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  26
+                ]
+              ]
+            },
+            "confidence_ece": 0.08918643714544497,
+            "confidence_calibration_table": [
+              {
+                "n": 15,
+                "mean_confidence": 0.5010876056530458,
+                "accuracy": 0.6666666666666666
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.6779033041455348,
+                "accuracy": 0.7333333333333333
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.8131100361308498,
+                "accuracy": 1
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.956767494543619,
+                "accuracy": 0.9333333333333333
+              },
+              {
+                "n": 14,
+                "mean_confidence": 0.9907287057464215,
+                "accuracy": 1
+              }
+            ]
+          }
+        },
+        "XGBoost": {
+          "params": {
+            "objective": "multi:softprob",
+            "base_score": null,
+            "booster": null,
+            "callbacks": null,
+            "colsample_bylevel": null,
+            "colsample_bynode": null,
+            "colsample_bytree": 0.9,
+            "device": null,
+            "early_stopping_rounds": null,
+            "enable_categorical": false,
+            "eval_metric": "mlogloss",
+            "feature_types": null,
+            "gamma": null,
+            "grow_policy": null,
+            "importance_type": null,
+            "interaction_constraints": null,
+            "learning_rate": 0.05,
+            "max_bin": null,
+            "max_cat_threshold": null,
+            "max_cat_to_onehot": null,
+            "max_delta_step": null,
+            "max_depth": 3,
+            "max_leaves": null,
+            "min_child_weight": 2,
+            "missing": "nan",
+            "monotone_constraints": null,
+            "multi_strategy": null,
+            "n_estimators": 200,
+            "n_jobs": 1,
+            "num_parallel_tree": null,
+            "random_state": 42,
+            "reg_alpha": null,
+            "reg_lambda": null,
+            "sampling_method": null,
+            "scale_pos_weight": null,
+            "subsample": 0.9,
+            "tree_method": "hist",
+            "validate_parameters": null,
+            "verbosity": null
+          },
+          "cv_on_training_split": {
+            "accuracy": {
+              "mean": 0.8469900642898889,
+              "sd": 0.0496843718297787
+            },
+            "balanced_accuracy": {
+              "mean": 0.808678160548365,
+              "sd": 0.06391895718446383
+            },
+            "macro_f1": {
+              "mean": 0.8072773618241683,
+              "sd": 0.06414928004486932
+            },
+            "roc_auc_ovr_macro": {
+              "mean": 0.9652116659503225,
+              "sd": 0.019400814276195638
+            },
+            "log_loss": {
+              "mean": 0.40744237489612944,
+              "sd": 0.1166628258458624
+            }
+          },
+          "cv_out_of_fold_calibration": [
+            {
+              "n": 59,
+              "mean_confidence": 0.5539042949676514,
+              "accuracy": 0.4915254237288136
+            },
+            {
+              "n": 59,
+              "mean_confidence": 0.82369464635849,
+              "accuracy": 0.8305084745762712
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.933559000492096,
+              "accuracy": 0.9310344827586207
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.9771579504013062,
+              "accuracy": 0.9827586206896551
+            },
+            {
+              "n": 58,
+              "mean_confidence": 0.9950121641159058,
+              "accuracy": 1
+            }
+          ],
+          "cv_out_of_fold_ece": 0.01658535840576642,
+          "test_holdout": {
+            "n": 74,
+            "accuracy": 0.8243243243243243,
+            "balanced_accuracy": 0.7733977978543196,
+            "macro_f1": 0.7739519252677147,
+            "roc_auc_ovr_macro": 0.9561675402236206,
+            "log_loss": 0.47114580117338695,
+            "brier_multiclass": 0.22898287815603907,
+            "per_class": {
+              "psoriasis": {
+                "precision": 0.9523809523809523,
+                "recall": 0.8695652173913043,
+                "f1": 0.9090909090909091,
+                "support": 23
+              },
+              "seborrheic_dermatitis": {
+                "precision": 0.5625,
+                "recall": 0.75,
+                "f1": 0.6428571428571429,
+                "support": 12
+              },
+              "chronic_dermatitis": {
+                "precision": 0.75,
+                "recall": 0.5454545454545454,
+                "f1": 0.631578947368421,
+                "support": 11
+              },
+              "other_scaly_rash": {
+                "precision": 0.896551724137931,
+                "recall": 0.9285714285714286,
+                "f1": 0.9122807017543859,
+                "support": 28
+              }
+            },
+            "confusion_matrix": {
+              "labels": [
+                "psoriasis",
+                "seborrheic_dermatitis",
+                "chronic_dermatitis",
+                "other_scaly_rash"
+              ],
+              "rows_true_cols_pred": [
+                [
+                  20,
+                  2,
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  9,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  4,
+                  6,
+                  1
+                ],
+                [
+                  0,
+                  1,
+                  1,
+                  26
+                ]
+              ]
+            },
+            "confidence_ece": 0.05170393715033659,
+            "confidence_calibration_table": [
+              {
+                "n": 15,
+                "mean_confidence": 0.5731074810028076,
+                "accuracy": 0.4
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.8447449207305908,
+                "accuracy": 0.8
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.9554197788238525,
+                "accuracy": 0.9333333333333333
+              },
+              {
+                "n": 15,
+                "mean_confidence": 0.9884385466575623,
+                "accuracy": 1
+              },
+              {
+                "n": 14,
+                "mean_confidence": 0.9961723685264587,
+                "accuracy": 1
+              }
+            ]
+          }
+        }
+      },
+      "robustness_of_chosen_model": [
+        {
+          "fraction_of_answers_hidden": 0,
+          "mean_accuracy": 0.8378378378378378,
+          "mean_log_loss": 0.45585752666498197
+        },
+        {
+          "fraction_of_answers_hidden": 0.25,
+          "mean_accuracy": 0.7549549549549549,
+          "mean_log_loss": 0.6678188124713117
+        },
+        {
+          "fraction_of_answers_hidden": 0.5,
+          "mean_accuracy": 0.6112612612612612,
+          "mean_log_loss": 1.0048965856801575
+        },
+        {
+          "fraction_of_answers_hidden": 0.75,
+          "mean_accuracy": 0.43693693693693697,
+          "mean_log_loss": 1.4230757519884838
+        }
+      ],
+      "caveats": [
+        "n=366 patients from a single source (UCI donation, 1998); the test set has only 74 patients, so metrics are noisy.",
+        "Labels are clinic diagnoses with biopsy support; the app only uses biopsy-free answers.",
+        "Questionnaire answers by laypeople are NOT the same as clinician-scored features: no validation exists."
+      ]
+    }
+  }
+}

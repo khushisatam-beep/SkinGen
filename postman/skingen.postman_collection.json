@@ -1,0 +1,673 @@
+{
+  "info": {
+    "name": "SkinGen backend v3.1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "mlBaseUrl",
+      "value": "http://localhost:8001"
+    },
+    {
+      "key": "adminApiKey",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "health",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "health"
+          ]
+        }
+      }
+    },
+    {
+      "name": "questionnaire",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/questionnaire",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "questionnaire"
+          ]
+        }
+      }
+    },
+    {
+      "name": "assess_psoriasis-like-answers",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"age\": 34,\n    \"redness\": \"moderate\",\n    \"scaling\": \"severe\",\n    \"clear_edges\": \"severe\",\n    \"itching\": \"mild\",\n    \"new_patches_after_injury\": \"mild\",\n    \"knees_elbows\": \"severe\",\n    \"scalp\": \"moderate\",\n    \"family_history\": \"yes\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "assess_mouth-and-purple-bumps",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"age\": 45,\n    \"redness\": \"moderate\",\n    \"scaling\": \"none\",\n    \"clear_edges\": \"moderate\",\n    \"itching\": \"severe\",\n    \"flat_purple_bumps\": \"severe\",\n    \"mouth_lesions\": \"severe\",\n    \"knees_elbows\": \"none\",\n    \"scalp\": \"none\",\n    \"family_history\": \"no\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "assess_scalp-and-flaking-some-not-sure",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"age\": 52,\n    \"redness\": \"mild\",\n    \"scaling\": \"moderate\",\n    \"itching\": \"moderate\",\n    \"scalp\": \"severe\",\n    \"clear_edges\": \"none\",\n    \"knees_elbows\": \"none\",\n    \"family_history\": \"not sure\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "assess_casual-typing-is-ok",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"Scaling\": \"SEVERE \",\n    \"redness\": \"Mild\",\n    \"itching\": \"not sure\",\n    \"age\": \"40\",\n    \"scalp\": \"No\",\n    \"family_history\": \"Yes\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "assess_error_bad-choice",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"age\": 34,\n    \"redness\": \"moderate\",\n    \"scaling\": \"huge\",\n    \"clear_edges\": \"severe\",\n    \"itching\": \"mild\",\n    \"new_patches_after_injury\": \"mild\",\n    \"knees_elbows\": \"severe\",\n    \"scalp\": \"moderate\",\n    \"family_history\": \"yes\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "assess_error_unknown-question",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"colour\": \"red\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "assess_error_too-few-answers",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"scaling\": \"mild\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "assess_red-flag-urgent",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"age\": 34,\n    \"redness\": \"moderate\",\n    \"scaling\": \"severe\",\n    \"clear_edges\": \"severe\",\n    \"itching\": \"mild\",\n    \"new_patches_after_injury\": \"mild\",\n    \"knees_elbows\": \"severe\",\n    \"scalp\": \"moderate\",\n    \"family_history\": \"yes\"\n  },\n  \"redFlags\": {\n    \"fever_or_very_unwell\": true,\n    \"blisters\": false\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "assess_family-history-relatives",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"age\": 34,\n    \"redness\": \"moderate\",\n    \"scaling\": \"severe\",\n    \"clear_edges\": \"severe\",\n    \"itching\": \"mild\",\n    \"new_patches_after_injury\": \"mild\",\n    \"knees_elbows\": \"severe\",\n    \"scalp\": \"moderate\",\n    \"family_history\": \"yes\"\n  },\n  \"consentToStore\": false,\n  \"familyHistory\": {\n    \"psoriasis\": \"not sure\",\n    \"eczema\": false,\n    \"asthma_or_hay_fever\": \"yes\",\n    \"relatives\": [\n      {\n        \"relation\": \"mother\",\n        \"condition\": \"eczema\",\n        \"answer\": \"yes\"\n      },\n      {\n        \"relation\": \"sibling\",\n        \"condition\": \"psoriasis\",\n        \"answer\": \"not sure\"\n      }\n    ]\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "capabilities",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/capabilities",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "capabilities"
+          ]
+        }
+      }
+    },
+    {
+      "name": "model-info",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/model-info",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "model-info"
+          ]
+        }
+      }
+    },
+    {
+      "name": "model-comparison",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/model-comparison",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "model-comparison"
+          ]
+        }
+      }
+    },
+    {
+      "name": "model-health",
+      "description": "Direct FastAPI model-service health and model version.",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{mlBaseUrl}}/health",
+          "host": [
+            "{{mlBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      }
+    },
+    {
+      "name": "family-history-analysis",
+      "description": "Descriptive family-history summary. Unknown answers must remain unknown.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/family-history-analysis",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "family-history-analysis"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"familyHistory\": {\n    \"psoriasis\": \"yes\",\n    \"asthma_or_hay_fever\": \"yes\",\n    \"autoimmune_disease\": \"not_sure\",\n    \"relatives\": [\n      {\n        \"relation\": \"mother\",\n        \"condition\": \"psoriasis\",\n        \"answer\": \"yes\"\n      },\n      {\n        \"relation\": \"maternal_grandmother\",\n        \"condition\": \"eczema\",\n        \"answer\": \"not_sure\"\n      },\n      {\n        \"relation\": \"paternal_grandfather\",\n        \"condition\": \"vitiligo\",\n        \"answer\": \"no\"\n      }\n    ]\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "hereditary-risk-qualitative-only",
+      "description": "Returns qualitative statuses only; riskPercentage must be null and riskEstimateAvailable false.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/hereditary-risk",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "hereditary-risk"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"familyHistory\": {\n    \"psoriasis\": \"yes\",\n    \"eczema\": \"no\",\n    \"vitiligo\": \"not_sure\",\n    \"asthma_or_hay_fever\": \"yes\",\n    \"relatives\": [\n      {\n        \"relation\": \"mother\",\n        \"condition\": \"psoriasis\",\n        \"answer\": \"yes\"\n      }\n    ]\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "assess-consent-granted",
+      "description": "Fictional data. Intentionally writes a model-score history record if ENABLE_HISTORY and MongoDB are available. STORE_INPUTS defaults false.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"age\": 34,\n    \"redness\": \"moderate\",\n    \"scaling\": \"severe\",\n    \"clear_edges\": \"severe\",\n    \"itching\": \"mild\",\n    \"knees_elbows\": \"severe\",\n    \"scalp\": \"moderate\",\n    \"family_history\": \"yes\"\n  },\n  \"redFlags\": {\n    \"rapidly_worsening\": false,\n    \"fever_or_very_unwell\": false,\n    \"pus_or_fluid\": false,\n    \"painful_hot_swelling\": false,\n    \"blisters\": false\n  },\n  \"consentToStore\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "assess-partially-answered-red-flags",
+      "description": "Regression case: should return safety.level not_assessed, not none_reported, because four safety questions remain unanswered.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"age\": 34,\n    \"redness\": \"moderate\",\n    \"scaling\": \"severe\",\n    \"clear_edges\": \"severe\",\n    \"itching\": \"mild\",\n    \"knees_elbows\": \"severe\",\n    \"scalp\": \"moderate\",\n    \"family_history\": \"yes\"\n  },\n  \"redFlags\": {\n    \"rapidly_worsening\": false\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "history-protected",
+      "description": "Protected endpoint; set adminApiKey in the local Postman environment. Never export a populated secret.",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{adminApiKey}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/history",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "history"
+          ]
+        }
+      }
+    },
+    {
+      "name": "assess-consent-not-granted",
+      "description": "Fictional data. Explicitly denies storage consent. Expect a successful assessment and X-History-Saved: false.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"age\": 34,\n    \"redness\": \"moderate\",\n    \"scaling\": \"severe\",\n    \"clear_edges\": \"severe\",\n    \"itching\": \"mild\",\n    \"knees_elbows\": \"severe\",\n    \"scalp\": \"moderate\",\n    \"family_history\": \"yes\"\n  },\n  \"redFlags\": {\n    \"rapidly_worsening\": false,\n    \"fever_or_very_unwell\": false,\n    \"pus_or_fluid\": false,\n    \"painful_hot_swelling\": false,\n    \"blisters\": false\n  },\n  \"consentToStore\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        }
+      }
+    },
+    {
+      "name": "assess-invalid-consent-value",
+      "description": "Validation regression case. The gateway must reject this with HTTP 400 invalid_consent and must not forward it to the ML service.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"answers\": {\n    \"age\": 34,\n    \"redness\": \"moderate\",\n    \"scaling\": \"severe\",\n    \"clear_edges\": \"severe\",\n    \"itching\": \"mild\",\n    \"knees_elbows\": \"severe\",\n    \"scalp\": \"moderate\",\n    \"family_history\": \"yes\"\n  },\n  \"consentToStore\": \"yes\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/assess",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "assess"
+          ]
+        }
+      }
+    }
+  ]
+}
