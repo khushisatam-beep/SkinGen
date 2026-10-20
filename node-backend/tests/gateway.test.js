@@ -8,7 +8,7 @@ const answers = { scaling: "severe", itching: "mild", redness: "mild", age: 30 }
 test("POST /assess forwards body to ML and returns its response unchanged", async () => {
   fake = await startFakeMl(() => ({ json: { topCondition: { condition: "psoriasis" }, predictions: [] } }));
   const { app } = buildApp({ mlUrl: fake.url });
-  const r = await request(app).post("/api/v1/assess").send({ answers });
+  const r = await request(app).post("/api/v1/assess").send({ answers, consentToStore: true });
   expect(r.status).toBe(200);
   expect(fake.calls[0]).toMatchObject({ method: "POST", url: "/v1/assess", body: { answers } });
 });
@@ -17,7 +17,7 @@ test("ML validation errors (422) pass through untouched", async () => {
   const body = { error: { code: "invalid_answers", message: "x", details: [{ field: "scaling", message: "Please choose one of: none" }] } };
   fake = await startFakeMl(() => ({ status: 422, json: body }));
   const { app } = buildApp({ mlUrl: fake.url });
-  const r = await request(app).post("/api/v1/assess").send({ answers: { scaling: "huge" } });
+  const r = await request(app).post("/api/v1/assess").send({ answers: { scaling: "huge" }, consentToStore: true });
   expect(r.status).toBe(422);
   expect(r.body).toEqual(body);
 });
@@ -100,7 +100,7 @@ describe("gateway request checks", () => {
 describe("ML service unavailable", () => {
   test("connection refused -> 502", async () => {
     const { app } = buildApp({ mlUrl: "http://127.0.0.1:1" });
-    const r = await request(app).post("/api/v1/assess").send({ answers });
+    const r = await request(app).post("/api/v1/assess").send({ answers, consentToStore: true });
     expect(r.status).toBe(502); expect(r.body.error.code).toBe("ml_service_unavailable");
   });
   test("timeout -> 504", async () => {
@@ -137,12 +137,12 @@ describe("health with ML up", () => {
 });
 
 describe("MongoDB unavailable but history enabled", () => {
-  test("assessments still work, health 'degraded', /history 503", async () => {
+  test("assessment results are not returned when MongoDB cannot save them", async () => {
     fake = await startFakeMl(({ url }) => url === "/health" ? { json: { status: "ok" } } : { json: { topCondition: { condition: "psoriasis" }, predictions: [] } });
     const { app, db } = buildApp({ mlUrl: fake.url, configOverride: { enableHistory: true, mongoUri: "mongodb://127.0.0.1:1/x", adminApiKey: "k" } });
     await db.connect();
     const r = await request(app).post("/api/v1/assess").send({ answers, consentToStore: true });
-    expect(r.status).toBe(200); expect(r.headers["x-history-saved"]).toBe("false");
+    expect(r.status).toBe(503); expect(r.body.error.code).toBe("save_failed");
     const h = await request(app).get("/api/v1/health");
     expect(h.status).toBe(200); expect(h.body.status).toBe("degraded");
     expect((await request(app).get("/api/v1/history").set("x-api-key", "k")).status).toBe(503);
@@ -170,35 +170,37 @@ describe("history content (fake store; real MongoDB path NOT covered)", () => {
     fake = await startFakeMl(() => ({ status: 422, json: { error: {} } }));
     const history = { recordAssessment: jest.fn(), list: jest.fn() };
     const { app } = buildApp({ mlUrl: fake.url, historyOverride: history });
-    await request(app).post("/api/v1/assess").send({ answers: {} });
+    await request(app).post("/api/v1/assess").send({ answers: {}, consentToStore: true });
     expect(history.recordAssessment).not.toHaveBeenCalled();
   });
-  test("stored document has scores only by default; answers only when STORE_INPUTS=true", async () => {
+  test("stored document always contains user, answers, and the complete screening result", async () => {
     const mongoose = require("mongoose");
-    const create = jest.fn().mockResolvedValue({});
+    const create = jest.fn().mockResolvedValue({ _id: "saved-record-id" });
     jest.spyOn(mongoose, "model").mockReturnValue({ create });
     Object.defineProperty(mongoose.connection, "readyState", { value: 1, configurable: true });
     const { createHistory } = require("../src/services/history");
     const db = { isReady: () => true };
-    await createHistory({ db, config: { storeInputs: false, historyTtlDays: 30 } }).recordAssessment({ answers }, { ...mlOut, safety: { level: "urgent_review" } });
-    await createHistory({ db, config: { storeInputs: true, historyTtlDays: 30 } }).recordAssessment({ answers }, mlOut);
-    expect(create.mock.calls[0][0].answers).toBeUndefined();
-    expect(create.mock.calls[0][0]).toMatchObject({ consent: true, safetyLevel: "urgent_review" });
+    const input = { answers, redFlags: { urgent: false }, familyHistory: { psoriasis: "yes" }, user: { name: "Test User" }, userId: "507f1f77bcf86cd799439011" };
+    await createHistory({ db, config: { storeInputs: false, historyTtlDays: 30 } }).recordAssessment(input, { ...mlOut, safety: { level: "urgent_review" } });
+    expect(create.mock.calls[0][0]).toMatchObject({ consent: true, safetyLevel: "urgent_review", user: { name: "Test User" }, userId: input.userId, screeningResult: { safety: { level: "urgent_review" } } });
+    expect(create.mock.calls[0][0].answers).toEqual(answers);
+    expect(create.mock.calls[0][0].redFlags).toEqual(input.redFlags);
+    expect(create.mock.calls[0][0].familyHistory).toEqual(input.familyHistory);
     expect(create.mock.calls[0][0].scores).toEqual({ psoriasis: 0.9, other_scaly_rash: 0.1 });
-    expect(create.mock.calls[1][0].answers).toEqual(answers);
     jest.restoreAllMocks();
   });
 });
 
 describe("consent, access control, rate limiting", () => {
   const ok = { json: { topCondition: { condition: "psoriasis" }, predictions: [] } };
-  test("no consent -> nothing saved, consent flag not forwarded to ML", async () => {
+  test("no consent -> request rejected before ML or Mongo storage", async () => {
     fake = await startFakeMl(() => ok);
     const history = { recordAssessment: jest.fn().mockResolvedValue(true), list: jest.fn() };
     const { app } = buildApp({ mlUrl: fake.url, historyOverride: history });
     for (const extra of [{}, { consentToStore: false }]) {
       const r = await request(app).post("/api/v1/assess").send({ answers, ...extra });
-      expect(r.headers["x-history-saved"]).toBe("false");
+      expect(r.status).toBe(400);
+      expect(r.body.error.code).toBe("consent_required");
     }
     expect(history.recordAssessment).not.toHaveBeenCalled();
     expect(fake.calls.every((c) => !("consentToStore" in c.body))).toBe(true);
@@ -213,7 +215,7 @@ describe("consent, access control, rate limiting", () => {
     fake = await startFakeMl(() => ok);
     const { app } = buildApp({ mlUrl: fake.url });
     const extra = { redFlags: { blisters: true }, familyHistory: { psoriasis: "yes" } };
-    await request(app).post("/api/v1/assess").send({ answers, ...extra });
+    await request(app).post("/api/v1/assess").send({ answers, ...extra, consentToStore: true });
     expect(fake.calls[0].body).toEqual({ answers, ...extra });
   });
   test("/history: 503 without ADMIN_API_KEY, 401 wrong key, ok with key (header or bearer)", async () => {
@@ -229,11 +231,35 @@ describe("consent, access control, rate limiting", () => {
     expect(a.status).toBe(200); expect(a.body.count).toBe(1);
     expect((await request(app).get("/api/v1/history").set("Authorization", "Bearer secret-key")).status).toBe(200);
   });
+  test("admin report list returns the total Mongo count independently of page size", async () => {
+    const reports = [{ _id: "report-1" }, { _id: "report-2" }];
+    const history = { list: jest.fn().mockResolvedValue(reports), countRecords: jest.fn().mockResolvedValue(27) };
+    const { app } = buildApp({ mlUrl: "http://127.0.0.1:1", historyOverride: history, configOverride: { adminApiKey: "secret-key" } });
+    const response = await request(app).get("/api/v1/admin/records?limit=1000").set("x-api-key", "secret-key");
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ count: 27, records: reports });
+  });
+  test("admin can permanently delete an account while retaining its named reports", async () => {
+    const users = { deleteAccount: jest.fn().mockResolvedValue(undefined) };
+    const { app } = buildApp({ mlUrl: "http://127.0.0.1:1", usersOverride: users, configOverride: { adminApiKey: "secret-key" } });
+    const response = await request(app).delete("/api/v1/admin/users/507f1f77bcf86cd799439011").set("x-api-key", "secret-key");
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ deleted: true, reportsRetained: true });
+    expect(users.deleteAccount).toHaveBeenCalledWith("507f1f77bcf86cd799439011");
+  });
+  test("admin user list includes profile and account activity fields", async () => {
+    const profile = { id: "507f1f77bcf86cd799439011", name: "Example", email: "example@example.com", phone: "123", age: 32, gender: "Not specified", createdAt: "2026-01-01T00:00:00.000Z", lastActiveAt: "2026-02-01T00:00:00.000Z" };
+    const users = { listAdmin: jest.fn().mockResolvedValue({ total: 1, users: [profile] }) };
+    const { app } = buildApp({ mlUrl: "http://127.0.0.1:1", usersOverride: users, configOverride: { adminApiKey: "secret-key" } });
+    const response = await request(app).get("/api/v1/admin/users").set("x-api-key", "secret-key");
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ total: 1, users: [profile] });
+  });
   test("rate limit returns 429 envelope", async () => {
     fake = await startFakeMl(() => ok);
     const { app } = buildApp({ mlUrl: fake.url, configOverride: { rateLimitPerMin: 2 } });
     const codes = [];
-    for (let i = 0; i < 3; i++) codes.push((await request(app).post("/api/v1/assess").send({ answers })).status);
+    for (let i = 0; i < 3; i++) codes.push((await request(app).post("/api/v1/assess").send({ answers, consentToStore: true })).status);
     expect(codes).toEqual([200, 200, 429]);
   });
   test("security headers present", async () => {

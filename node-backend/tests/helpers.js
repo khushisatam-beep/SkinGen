@@ -24,11 +24,27 @@ function startFakeMl(handler) {
   });
 }
 
-function buildApp({ mlUrl, historyOverride, configOverride = {} }) {
+function buildApp({ mlUrl, historyOverride, configOverride = {}, usersOverride }) {
   const config = { enableHistory: false, mongoUri: "", mongoTimeoutMs: 500, storeInputs: false, historyTtlDays: 30, corsOrigin: "", adminApiKey: "", rateLimitPerMin: 0, trustProxy: "", ...configOverride };
   const ml = createMlClient({ baseUrl: mlUrl, timeoutMs: 1500 });
   const db = createDb(config);
-  const history = historyOverride || createHistory({ db, config });
-  return { app: createApp({ ml, db, history, config }), db, ml, config };
+  const history = historyOverride || {
+    recordAssessment: async () => config.enableHistory ? (db.isReady() ? "test-record-id" : null) : "test-record-id",
+    list: async () => config.enableHistory && db.isReady() ? [] : null,
+    listForUser: async () => [],
+    deleteRecord: async () => true,
+    anonymizeUser: async () => true,
+  };
+  const users = usersOverride || {
+    register: async () => ({ user: { id: "test-user-id", name: "Test User" }, token: "test-token" }),
+    authenticate: async () => ({ user: { id: "test-user-id", name: "Test User" }, token: "test-token" }),
+    getById: async () => ({ id: "test-user-id", name: "Test User" }),
+    updateProfile: async (_id, fields) => ({ id: "test-user-id", name: "Test User", ...fields }),
+    changePassword: async () => {},
+    deleteAccount: async () => {},
+    listAdmin: async () => ({ total: 0, users: [] }),
+  };
+  const userAuth = (req, _res, next) => { req.user = { id: "507f1f77bcf86cd799439011", name: "Test User", email: "test@example.com" }; next(); };
+  return { app: createApp({ ml, db, history, config, users, userAuth }), db, ml, config };
 }
 module.exports = { startFakeMl, buildApp };

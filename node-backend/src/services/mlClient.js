@@ -4,11 +4,16 @@ class MlUnavailableError extends Error {
 }
 
 function createMlClient({ baseUrl, timeoutMs = 10000 }) {
+  // Docker uses an internal HTTP URL; Render Blueprints can provide a private host:port.
+  const rawBaseUrl = String(baseUrl || '127.0.0.1:8001');
+  const normalizedBaseUrl = (rawBaseUrl.startsWith('http://') || rawBaseUrl.startsWith('https://'))
+    ? rawBaseUrl.replace(/\/$/, '')
+    : `http://${rawBaseUrl.replace(/\/$/, '')}`;
   async function call(method, path, body) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), timeoutMs);
     try {
-      const res = await fetch(baseUrl + path, {
+      const res = await fetch(normalizedBaseUrl + path, {
         method,
         headers: body ? { "Content-Type": "application/json" } : undefined,
         body: body ? JSON.stringify(body) : undefined,

@@ -1,4 +1,4 @@
-// Optional MongoDB connection. Never throws at startup; status is reported by /health.
+// MongoDB connection for user accounts and consented screening reports. Never throws at startup; status is reported by /health.
 const mongoose = require("mongoose");
 
 function createDb(config) {

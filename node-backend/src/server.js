@@ -9,4 +9,7 @@ const db = createDb(config);
 const history = createHistory({ db, config });
 createApp({ ml, db, history, config }).listen(config.port, () =>
   console.log(`SkinGen Node API on port ${config.port} (history ${config.enableHistory ? "enabled" : "disabled"})`));
-db.connect().then(() => history.syncModelMetadata(ml));   // background: API works even if MongoDB is down
+db.connect().then(async () => {
+  if (db.isReady()) await history.removeExpiryIndexes();
+  await history.syncModelMetadata(ml);
+}); // account and report APIs remain unavailable until MongoDB is ready
