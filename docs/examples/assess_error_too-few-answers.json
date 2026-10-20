@@ -1,0 +1,37 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/api/v1/assess",
+    "body": {
+      "answers": {
+        "scaling": "mild"
+      }
+    }
+  },
+  "response": {
+    "status": 422,
+    "body": {
+      "error": {
+        "code": "too_few_answers",
+        "message": "Please answer at least 4 questions (you answered 1).",
+        "details": {
+          "answered": 1,
+          "minimum": 4,
+          "safety": {
+            "level": "not_assessed",
+            "message": "Red-flag questions were not answered, so urgent warning signs were not checked.",
+            "triggeredBy": [],
+            "unanswered": [
+              "rapidly_worsening",
+              "fever_or_very_unwell",
+              "pus_or_fluid",
+              "painful_hot_swelling",
+              "blisters"
+            ],
+            "note": "This check runs separately from the model: a low model score never overrides it."
+          }
+        }
+      }
+    }
+  }
+}

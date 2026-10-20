@@ -1,0 +1,388 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/api/v1/questionnaire",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "intro": "Answer what you can. 'Not sure' is always allowed (accuracy drops as more answers are missing).",
+      "minimumAnswers": 4,
+      "questions": [
+        {
+          "id": "age",
+          "text": "How old are you (in years)?",
+          "type": "number",
+          "help": "Enter a whole number.",
+          "min": 0,
+          "max": 110,
+          "required": false,
+          "choices": null
+        },
+        {
+          "id": "redness",
+          "text": "How red is the affected skin?",
+          "type": "grade",
+          "help": "Compare with your normal skin colour.",
+          "required": false,
+          "choices": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mild",
+              "label": "Mild"
+            },
+            {
+              "value": "moderate",
+              "label": "Moderate"
+            },
+            {
+              "value": "severe",
+              "label": "Severe"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        },
+        {
+          "id": "scaling",
+          "text": "How much dry flaking or scaling is there on the patches?",
+          "type": "grade",
+          "help": "Silvery-white or greasy yellowish flakes both count.",
+          "required": false,
+          "choices": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mild",
+              "label": "Mild"
+            },
+            {
+              "value": "moderate",
+              "label": "Moderate"
+            },
+            {
+              "value": "severe",
+              "label": "Severe"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        },
+        {
+          "id": "clear_edges",
+          "text": "Do the patches have sharp, clearly defined edges?",
+          "type": "grade",
+          "help": "'Severe' = you can easily trace the edge with a finger; 'none' = the edges fade gradually.",
+          "required": false,
+          "choices": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mild",
+              "label": "Mild"
+            },
+            {
+              "value": "moderate",
+              "label": "Moderate"
+            },
+            {
+              "value": "severe",
+              "label": "Severe"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        },
+        {
+          "id": "itching",
+          "text": "How much do the patches itch?",
+          "type": "grade",
+          "required": false,
+          "choices": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mild",
+              "label": "Mild"
+            },
+            {
+              "value": "moderate",
+              "label": "Moderate"
+            },
+            {
+              "value": "severe",
+              "label": "Severe"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        },
+        {
+          "id": "new_patches_after_injury",
+          "text": "Do new patches appear where your skin was scratched, cut or otherwise injured?",
+          "type": "grade",
+          "required": false,
+          "choices": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mild",
+              "label": "Mild"
+            },
+            {
+              "value": "moderate",
+              "label": "Moderate"
+            },
+            {
+              "value": "severe",
+              "label": "Severe"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        },
+        {
+          "id": "flat_purple_bumps",
+          "text": "Do you have small, flat-topped, shiny, purplish bumps?",
+          "type": "grade",
+          "required": false,
+          "choices": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mild",
+              "label": "Mild"
+            },
+            {
+              "value": "moderate",
+              "label": "Moderate"
+            },
+            {
+              "value": "severe",
+              "label": "Severe"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        },
+        {
+          "id": "bumps_around_hairs",
+          "text": "Do you have tiny bumps centred on hair follicles?",
+          "type": "grade",
+          "required": false,
+          "choices": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mild",
+              "label": "Mild"
+            },
+            {
+              "value": "moderate",
+              "label": "Moderate"
+            },
+            {
+              "value": "severe",
+              "label": "Severe"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        },
+        {
+          "id": "mouth_lesions",
+          "text": "Do you have whitish, lacy patches or sores inside your mouth (e.g. inner cheeks)?",
+          "type": "grade",
+          "required": false,
+          "choices": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mild",
+              "label": "Mild"
+            },
+            {
+              "value": "moderate",
+              "label": "Moderate"
+            },
+            {
+              "value": "severe",
+              "label": "Severe"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        },
+        {
+          "id": "knees_elbows",
+          "text": "Are your knees or elbows affected?",
+          "type": "grade",
+          "required": false,
+          "choices": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mild",
+              "label": "Mild"
+            },
+            {
+              "value": "moderate",
+              "label": "Moderate"
+            },
+            {
+              "value": "severe",
+              "label": "Severe"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        },
+        {
+          "id": "scalp",
+          "text": "Is your scalp affected?",
+          "type": "grade",
+          "required": false,
+          "choices": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "mild",
+              "label": "Mild"
+            },
+            {
+              "value": "moderate",
+              "label": "Moderate"
+            },
+            {
+              "value": "severe",
+              "label": "Severe"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        },
+        {
+          "id": "family_history",
+          "text": "Has anyone in your close family (parents, brothers, sisters, children) had psoriasis or a similar scaly skin condition?",
+          "type": "yes_no",
+          "help": "Answer 'not sure' if you don't know. Not knowing is treated as missing, never as 'no'. (In the training data this item mainly reflects psoriasis-type family history.)",
+          "required": false,
+          "choices": [
+            {
+              "value": "yes",
+              "label": "Yes"
+            },
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "not_sure",
+              "label": "Not sure"
+            }
+          ]
+        }
+      ],
+      "redFlagQuestions": [
+        {
+          "id": "rapidly_worsening",
+          "text": "Is the rash getting worse very quickly (over hours to a few days)?",
+          "type": "yes_no",
+          "required": false
+        },
+        {
+          "id": "fever_or_very_unwell",
+          "text": "Do you have a fever or feel very unwell along with the rash?",
+          "type": "yes_no",
+          "required": false
+        },
+        {
+          "id": "pus_or_fluid",
+          "text": "Is there pus, yellow crusting or oozing fluid from the skin?",
+          "type": "yes_no",
+          "required": false
+        },
+        {
+          "id": "painful_hot_swelling",
+          "text": "Is the skin painful, hot and swollen?",
+          "type": "yes_no",
+          "required": false
+        },
+        {
+          "id": "blisters",
+          "text": "Do you have blisters or open sores?",
+          "type": "yes_no",
+          "required": false
+        }
+      ],
+      "familyHistoryForm": {
+        "conditions": [
+          "psoriasis",
+          "eczema",
+          "vitiligo"
+        ],
+        "relations": [
+          "mother",
+          "father",
+          "sibling",
+          "child",
+          "grandparent",
+          "aunt_or_uncle",
+          "cousin",
+          "other"
+        ],
+        "answers": [
+          "yes",
+          "no",
+          "not_sure"
+        ],
+        "extraQuestions": [
+          "asthma_or_hay_fever",
+          "autoimmune_disease"
+        ]
+      }
+    }
+  }
+}

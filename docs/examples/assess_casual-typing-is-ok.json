@@ -1,0 +1,184 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/api/v1/assess",
+    "body": {
+      "answers": {
+        "Scaling": "SEVERE ",
+        "redness": "Mild",
+        "itching": "not sure",
+        "age": "40",
+        "scalp": "No",
+        "family_history": "Yes"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "safety": {
+        "level": "not_assessed",
+        "message": "Red-flag questions were not answered, so urgent warning signs were not checked.",
+        "triggeredBy": [],
+        "unanswered": [
+          "rapidly_worsening",
+          "fever_or_very_unwell",
+          "pus_or_fluid",
+          "painful_hot_swelling",
+          "blisters"
+        ],
+        "note": "This check runs separately from the model: a low model score never overrides it."
+      },
+      "disclaimer": "This is NOT a medical diagnosis. It is a research prototype trained on a small public dataset of 366 patients. Please see a doctor or dermatologist for any skin problem.",
+      "answeredCount": 5,
+      "totalQuestions": 12,
+      "notSure": [
+        "clear_edges",
+        "itching",
+        "new_patches_after_injury",
+        "flat_purple_bumps",
+        "bumps_around_hairs",
+        "mouth_lesions",
+        "knees_elbows"
+      ],
+      "accuracyWarning": "Many answers are missing; results are much less reliable.",
+      "predictions": [
+        {
+          "rank": 1,
+          "condition": "psoriasis",
+          "label": "Psoriasis",
+          "modelScore": 0.5185
+        },
+        {
+          "rank": 2,
+          "condition": "seborrheic_dermatitis",
+          "label": "Seborrheic dermatitis (a type of eczema/dermatitis)",
+          "modelScore": 0.3646
+        },
+        {
+          "rank": 3,
+          "condition": "other_scaly_rash",
+          "label": "Other scaly rash (lichen planus, pityriasis rosea or pityriasis rubra pilaris)",
+          "modelScore": 0.0997
+        },
+        {
+          "rank": 4,
+          "condition": "chronic_dermatitis",
+          "label": "Chronic dermatitis (eczema-type)",
+          "modelScore": 0.0172
+        }
+      ],
+      "topCondition": {
+        "rank": 1,
+        "condition": "psoriasis",
+        "label": "Psoriasis",
+        "modelScore": 0.5185
+      },
+      "scoreNote": "Scores sum to 1 across the four groups. They are NOT calibrated real-world probabilities, and can be extreme (near 0 or 1) when the answers match a typical pattern in the training data; that is not certainty.",
+      "explanation": {
+        "status": "ok",
+        "method": "exact linear contributions of the logistic-regression model (log-score, centred across conditions)",
+        "condition": "psoriasis",
+        "reasons": [
+          {
+            "question": "Has anyone in your close family (parents, brothers, sisters, children) had psoriasis or a similar scaly skin condition?",
+            "id": "family_history",
+            "yourAnswer": "yes",
+            "effect": "raises",
+            "strength": "strong",
+            "contribution": 1.1626,
+            "text": "Your answer \"yes\" for family history raises the score for Psoriasis (strong)."
+          },
+          {
+            "question": "How much dry flaking or scaling is there on the patches?",
+            "id": "scaling",
+            "yourAnswer": "severe",
+            "effect": "raises",
+            "strength": "strong",
+            "contribution": 1.0318,
+            "text": "Your answer \"severe\" for flaking/scaling raises the score for Psoriasis (strong)."
+          },
+          {
+            "question": "Is your scalp affected?",
+            "id": "scalp",
+            "yourAnswer": "none",
+            "effect": "lowers",
+            "strength": "strong",
+            "contribution": -0.9809,
+            "text": "Your answer \"none\" for scalp involvement lowers the score for Psoriasis (strong)."
+          },
+          {
+            "question": "How red is the affected skin?",
+            "id": "redness",
+            "yourAnswer": "mild",
+            "effect": "lowers",
+            "strength": "small",
+            "contribution": -0.1342,
+            "text": "Your answer \"mild\" for redness lowers the score for Psoriasis (small)."
+          },
+          {
+            "question": "How old are you (in years)?",
+            "id": "age",
+            "yourAnswer": "40 years",
+            "effect": "raises",
+            "strength": "small",
+            "contribution": 0.1257,
+            "text": "Your answer \"40 years\" for your age raises the score for Psoriasis (small)."
+          }
+        ],
+        "unsureAnswersEffect": -0.7882,
+        "unsureAnswersNote": "Questions marked 'not sure' were filled with the typical training value; their combined effect is shown here, not in the list.",
+        "strengthNote": "strong / moderate / small = size relative to the biggest effect in this list (a display choice, not a medical grade).",
+        "additivityCheck": {
+          "baselinePlusContributions": 1.351228,
+          "modelValue": 1.351228,
+          "absoluteDifference": 0
+        },
+        "scope": "This shows how each answer moved this model's score for the condition, compared with an average patient in the training data. It explains the model only - it does not prove cause or confirm a diagnosis."
+      },
+      "familyHistory": {
+        "yourAnswer": "yes",
+        "datasetFacts": {
+          "chronic_dermatitis": {
+            "with_family_history": 0,
+            "patients": 52,
+            "percent": 0
+          },
+          "other_scaly_rash": {
+            "with_family_history": 11,
+            "patients": 141,
+            "percent": 7.8
+          },
+          "psoriasis": {
+            "with_family_history": 32,
+            "patients": 112,
+            "percent": 28.6
+          },
+          "seborrheic_dermatitis": {
+            "with_family_history": 3,
+            "patients": 61,
+            "percent": 4.9
+          }
+        },
+        "note": "Share of training patients who had a family history, per group (real data). In this dataset it was far more common in psoriasis than in the other groups; it is not a hereditary-risk estimate for you."
+      },
+      "model": {
+        "name": "LogisticRegression",
+        "version": "3.0.0",
+        "trainedOn": "UCI Dermatology, 366 real patients",
+        "validatedOnLayAnswers": false
+      },
+      "familyHistoryAnalysis": null,
+      "limitations": [
+        "Trained on the real UCI Dermatology dataset (366 patients, donated to UCI in 1998, single source). It may not represent you.",
+        "The dataset's features were scored by clinicians; your own answers may differ, and this has never been validated.",
+        "Only four outcome groups exist. Eczema subtypes such as atopic or contact dermatitis, and vitiligo, are NOT covered by this dataset.",
+        "Scores are model outputs, not calibrated real-world probabilities. Hiding answers ('not sure') lowers accuracy a lot."
+      ],
+      "nextSteps": [
+        "Show this to a doctor or dermatologist - a clinician (sometimes with a biopsy) must confirm any diagnosis.",
+        "See a doctor soon if the rash is painful, spreading fast, blistering, infected, or comes with fever."
+      ]
+    }
+  }
+}

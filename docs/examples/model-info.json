@@ -1,0 +1,281 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/api/v1/model-info",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "schema_version": 1,
+      "model_version": "3.0.0",
+      "created_utc": "2026-10-16T08:03:32+00:00",
+      "chosen_model": "LogisticRegression",
+      "selection_rule": "lowest mean repeated-CV log loss on the 80% training split (MajorityBaseline excluded)",
+      "artifact": "model.joblib",
+      "artifact_sha256": "883cb99b22ea4648fa73c8d99cf99d121a12a3e831f1f7086bafea996350ab7c",
+      "classes": [
+        "psoriasis",
+        "seborrheic_dermatitis",
+        "chronic_dermatitis",
+        "other_scaly_rash"
+      ],
+      "class_definitions": {
+        "psoriasis": "psoriasis",
+        "seborrheic_dermatitis": "seboreic dermatitis",
+        "chronic_dermatitis": "cronic dermatitis",
+        "other_scaly_rash": "lichen planus + pityriasis rosea + pityriasis rubra pilaris (grouped)"
+      },
+      "features": [
+        "Age",
+        "erythema",
+        "scaling",
+        "definite_borders",
+        "itching",
+        "koebner_phenomenon",
+        "polygonal_papules",
+        "follicular_papules",
+        "oral_mucosal_involvement",
+        "knee_and_elbow_involvement",
+        "scalp_involvement",
+        "family_history"
+      ],
+      "training_medians_used_for_missing_answers": {
+        "Age": 35,
+        "erythema": 2,
+        "scaling": 2,
+        "definite_borders": 2,
+        "itching": 1,
+        "koebner_phenomenon": 0,
+        "polygonal_papules": 0,
+        "follicular_papules": 0,
+        "oral_mucosal_involvement": 0,
+        "knee_and_elbow_involvement": 0,
+        "scalp_involvement": 0,
+        "family_history": 0
+      },
+      "dataset": {
+        "name": "UCI Dermatology (erythemato-squamous diseases)",
+        "doi": "10.24432/C5FK5P",
+        "authors": "Nilsel Ilter, H. Altay Guvenir (1998)",
+        "download_url": "https://raw.githubusercontent.com/syedmabusubhani/Skin_Disorder_Project/4a737ef479004d525b42f5efc5c8143c161de1c9/skin_disorder.csv",
+        "sha256": "4c398eba26590ea7daad1c8405f971a669da5fc6f880d69dfdeea610c1c2f68b",
+        "real_data": true,
+        "rows": 366,
+        "dataset_classes": {
+          "1": 112,
+          "2": 61,
+          "3": 72,
+          "4": 49,
+          "5": 52,
+          "6": 20
+        },
+        "grouped_class_counts": {
+          "psoriasis": 112,
+          "seborrheic_dermatitis": 61,
+          "chronic_dermatitis": 52,
+          "other_scaly_rash": 141
+        },
+        "missing_values": {
+          "Age": 8
+        },
+        "features_not_used": "the 22 histopathology (biopsy) columns - a person cannot supply them"
+      },
+      "split": {
+        "test_fraction": 0.2,
+        "stratified": true,
+        "seed": 42,
+        "train_rows": 292,
+        "test_rows": 74
+      },
+      "final_model_fitted_on": "all 366 patients (metrics below come from the models before this final refit)",
+      "selected_model_params": {
+        "C": 1,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "l1_ratio": null,
+        "max_iter": 5000,
+        "multi_class": "deprecated",
+        "n_jobs": null,
+        "penalty": "l2",
+        "random_state": null,
+        "solver": "lbfgs",
+        "tol": 0.0001,
+        "verbose": 0,
+        "warm_start": false
+      },
+      "selected_model_test_holdout": {
+        "n": 74,
+        "accuracy": 0.8378378378378378,
+        "balanced_accuracy": 0.8099237718802935,
+        "macro_f1": 0.8057359307359307,
+        "roc_auc_ovr_macro": 0.9638192515095204,
+        "log_loss": 0.45585752666498197,
+        "brier_multiclass": 0.21792851682971065,
+        "per_class": {
+          "psoriasis": {
+            "precision": 0.9523809523809523,
+            "recall": 0.8695652173913043,
+            "f1": 0.9090909090909091,
+            "support": 23
+          },
+          "seborrheic_dermatitis": {
+            "precision": 0.5625,
+            "recall": 0.75,
+            "f1": 0.6428571428571429,
+            "support": 12
+          },
+          "chronic_dermatitis": {
+            "precision": 0.8,
+            "recall": 0.7272727272727273,
+            "f1": 0.7619047619047619,
+            "support": 11
+          },
+          "other_scaly_rash": {
+            "precision": 0.9259259259259259,
+            "recall": 0.8928571428571429,
+            "f1": 0.9090909090909091,
+            "support": 28
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "psoriasis",
+            "seborrheic_dermatitis",
+            "chronic_dermatitis",
+            "other_scaly_rash"
+          ],
+          "rows_true_cols_pred": [
+            [
+              20,
+              3,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              1,
+              2
+            ],
+            [
+              0,
+              3,
+              8,
+              0
+            ],
+            [
+              1,
+              1,
+              1,
+              25
+            ]
+          ]
+        },
+        "confidence_ece": 0.047149010077151395,
+        "confidence_calibration_table": [
+          {
+            "n": 15,
+            "mean_confidence": 0.5573896485680485,
+            "accuracy": 0.4
+          },
+          {
+            "n": 15,
+            "mean_confidence": 0.8107563625963748,
+            "accuracy": 0.8666666666666667
+          },
+          {
+            "n": 15,
+            "mean_confidence": 0.9498853719326951,
+            "accuracy": 0.9333333333333333
+          },
+          {
+            "n": 15,
+            "mean_confidence": 0.9973065260459123,
+            "accuracy": 1
+          },
+          {
+            "n": 14,
+            "mean_confidence": 0.999939659440546,
+            "accuracy": 1
+          }
+        ]
+      },
+      "selected_model_cv": {
+        "accuracy": {
+          "mean": 0.8743035262030002,
+          "sd": 0.04875499424087058
+        },
+        "balanced_accuracy": {
+          "mean": 0.8478896057764344,
+          "sd": 0.0535018256406447
+        },
+        "macro_f1": {
+          "mean": 0.8446097428837832,
+          "sd": 0.05384502522555213
+        },
+        "roc_auc_ovr_macro": {
+          "mean": 0.9728498061762061,
+          "sd": 0.01345914173205211
+        },
+        "log_loss": {
+          "mean": 0.35834561693330075,
+          "sd": 0.09082656017640024
+        }
+      },
+      "robustness_to_not_sure_answers": [
+        {
+          "fraction_of_answers_hidden": 0,
+          "mean_accuracy": 0.8378378378378378,
+          "mean_log_loss": 0.45585752666498197
+        },
+        {
+          "fraction_of_answers_hidden": 0.25,
+          "mean_accuracy": 0.7549549549549549,
+          "mean_log_loss": 0.6678188124713117
+        },
+        {
+          "fraction_of_answers_hidden": 0.5,
+          "mean_accuracy": 0.6112612612612612,
+          "mean_log_loss": 1.0048965856801575
+        },
+        {
+          "fraction_of_answers_hidden": 0.75,
+          "mean_accuracy": 0.43693693693693697,
+          "mean_log_loss": 1.4230757519884838
+        }
+      ],
+      "family_history_in_dataset": {
+        "chronic_dermatitis": {
+          "with_family_history": 0,
+          "patients": 52,
+          "percent": 0
+        },
+        "other_scaly_rash": {
+          "with_family_history": 11,
+          "patients": 141,
+          "percent": 7.8
+        },
+        "psoriasis": {
+          "with_family_history": 32,
+          "patients": 112,
+          "percent": 28.6
+        },
+        "seborrheic_dermatitis": {
+          "with_family_history": 3,
+          "patients": 61,
+          "percent": 4.9
+        }
+      },
+      "library_versions": {
+        "python": "3.12.3",
+        "scikit-learn": "1.5.1",
+        "xgboost": "2.1.1",
+        "numpy": "1.26.4",
+        "pandas": "2.2.2"
+      }
+    }
+  }
+}

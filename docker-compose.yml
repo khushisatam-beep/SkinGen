@@ -1,18 +1,66 @@
+# Backend only: MongoDB + Python ML service + Node gateway. No frontend container.
+# Usage: cp .env.example .env  (edit passwords)  then  docker compose up --build
 services:
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: skingen-frontend
-    ports:
-      - "3000:80"
+  mongo:
+    image: mongo:7
+    container_name: skingen-mongo
     restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:?set MONGO_ROOT_USERNAME in .env}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?set MONGO_ROOT_PASSWORD in .env}
+    volumes:
+      - mongo_data:/data/db
+    # Not published to the host: only reachable by other containers on this network.
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
 
-  server:
-    build:
-      context: .
-      dockerfile: Dockerfile.server
-    container_name: skingen-server
-    ports:
-      - "5000:5000"
+  ml-service:
+    build: ./ml-service
+    container_name: skingen-ml-service
     restart: unless-stopped
+    ports:
+      - "${ML_PORT:-8001}:8001"   # Swagger UI: http://localhost:8001/docs
+    # healthcheck is defined in the Dockerfile (GET /health)
+
+  node-backend:
+    build: ./node-backend
+    container_name: skingen-node
+    restart: unless-stopped
+    ports:
+      - "${NODE_PORT:-5000}:5000"
+    environment:
+      PORT: 5000
+      ML_SERVICE_URL: http://ml-service:8001
+      ENABLE_HISTORY: ${ENABLE_HISTORY:-true}
+      STORE_INPUTS: ${STORE_INPUTS:-false}
+      HISTORY_TTL_DAYS: ${HISTORY_TTL_DAYS:-30}
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-}
+      RATE_LIMIT_PER_MIN: ${RATE_LIMIT_PER_MIN:-60}
+      TRUST_PROXY: ${TRUST_PROXY:-}
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongo:27017/${MONGO_DB_NAME:-skingen}?authSource=admin
+    depends_on:
+      ml-service:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy   # convenience only: Node also starts if MongoDB is down
+
+  # Opt-in test runner. It includes Jest/Supertest and points integration tests at the real ML service.
+  # It is excluded from normal `docker compose up` by the test profile.
+  node-tests:
+    profiles: ["test"]
+    build:
+      context: ./node-backend
+      dockerfile: Dockerfile.test
+    environment:
+      ML_INTEGRATION_URL: http://ml-service:8001
+    depends_on:
+      ml-service:
+        condition: service_healthy
+
+volumes:
+  mongo_data:

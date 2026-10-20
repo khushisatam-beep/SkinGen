@@ -1,0 +1,28 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/api/v1/health",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "status": "ok",
+      "node": {
+        "status": "ok"
+      },
+      "mlService": {
+        "status": "ok",
+        "detail": {
+          "status": "ok",
+          "modelVersion": "3.0.0",
+          "modelError": null
+        }
+      },
+      "database": {
+        "status": "disabled",
+        "error": null
+      }
+    }
+  }
+}

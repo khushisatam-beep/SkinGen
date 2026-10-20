@@ -1,0 +1,26 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/api/v1/assess",
+    "body": {
+      "answers": {
+        "colour": "red"
+      }
+    }
+  },
+  "response": {
+    "status": 422,
+    "body": {
+      "error": {
+        "code": "invalid_answers",
+        "message": "Some answers could not be understood.",
+        "details": [
+          {
+            "field": "colour",
+            "message": "'colour' is not a known question. Valid ids: age, redness, scaling, clear_edges, itching, new_patches_after_injury, flat_purple_bumps, bumps_around_hairs, mouth_lesions, knees_elbows, scalp, family_history."
+          }
+        ]
+      }
+    }
+  }
+}

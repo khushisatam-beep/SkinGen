@@ -1,0 +1,53 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/api/v1/capabilities",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "assess": {
+        "status": "implemented",
+        "data": "UCI Dermatology (real, 366 patients)",
+        "note": "Scores 4 groups from a plain-language questionnaire; not validated on lay-reported answers."
+      },
+      "explanation": {
+        "status": "implemented",
+        "note": "Included in /assess. Exact for the logistic-regression model."
+      },
+      "family_history_insight": {
+        "status": "implemented",
+        "note": "Descriptive counts from the real dataset + the answer's effect in the model + a descriptive summary of the relatives the user reports (no percentages)."
+      },
+      "safety_routing": {
+        "status": "implemented",
+        "note": "Separate red-flag questions; any 'yes' returns an urgent-review notice that the model score cannot override."
+      },
+      "model_comparison": {
+        "status": "implemented",
+        "note": "LogReg vs RandomForest vs XGBoost vs baseline on real data."
+      },
+      "eczema_subtypes": {
+        "status": "partial",
+        "note": "Only 'seborrheic dermatitis' and 'chronic dermatitis' exist as labels. Atopic, contact and dyshidrotic eczema: no data."
+      },
+      "psoriasis_subtypes": {
+        "status": "blocked",
+        "note": "No dataset with plaque/guttate/scalp/nail labels was obtained."
+      },
+      "vitiligo": {
+        "status": "blocked",
+        "note": "No real vitiligo dataset reachable; vitiligo is absent from the UCI data."
+      },
+      "hereditary_risk_model": {
+        "status": "blocked",
+        "note": "No real family-history cohort available. Only a descriptive family-history fact is provided."
+      },
+      "genetic_risk": {
+        "status": "blocked",
+        "note": "Needs individual genotypes and verified GWAS data; none were obtained."
+      }
+    }
+  }
+}
