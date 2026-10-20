@@ -29,6 +29,20 @@ URGENT_STEP = "Because you reported warning signs, get medical help today - do n
 NEXT_STEPS = ["Show this to a doctor or dermatologist - a clinician (sometimes with a biopsy) must confirm any diagnosis.",
               "See a doctor soon if the rash is painful, spreading fast, blistering, infected, or comes with fever."]
 
+
+def basic_care_plan(condition: Optional[str]):
+    """Return short, low-risk educational steps matched to the leading group."""
+    if condition == "psoriasis":
+        return {"title": "Basic plan for a likely psoriasis pattern", "summary": "Gentle care while you arrange professional advice.", "steps": ["Moisturise regularly, especially after bathing.", "Avoid picking or scratching plaques and protect irritated skin from friction.", "Arrange a clinician review if patches persist, spread, or affect joints."]}
+    elif condition == "seborrheic_dermatitis":
+        return {"title": "Basic plan for a likely seborrheic dermatitis pattern", "summary": "Simple scalp and skin support while you arrange professional advice.", "steps": ["Use a gentle cleanser and avoid fragranced products on irritated areas.", "Keep the scalp routine consistent and follow product labels carefully.", "Arrange a clinician review if scaling, redness, or discomfort continues."]}
+    elif condition == "chronic_dermatitis":
+        return {"title": "Basic plan for a likely dermatitis pattern", "summary": "Support the skin barrier and reduce avoidable irritation.", "steps": ["Use a fragrance-free moisturiser several times a day.", "Keep showers lukewarm and choose gentle, fragrance-free cleansers.", "Arrange a clinician review if itching or irritation keeps returning."]}
+    elif condition == "other_scaly_rash":
+        return {"title": "Basic plan for a likely scaly-rash pattern", "summary": "Keep the routine gentle until the pattern is reviewed professionally.", "steps": ["Moisturise with a plain, fragrance-free product.", "Avoid new active products and do not scratch or peel scaling skin.", "Arrange a clinician review for a persistent, spreading, or changing rash."]}
+    else:
+        return {"title": "Basic gentle-skin plan", "summary": "A simple starting routine while you arrange professional advice.", "steps": ["Use a mild, fragrance-free cleanser.", "Moisturise after washing and avoid products that sting.", "Track changes and seek care if symptoms persist or worsen."]}
+
 CAPABILITIES = {
     "assess": {"status": "implemented", "data": "UCI Dermatology (real, 366 patients)",
                "note": "Scores 4 groups from a plain-language questionnaire; not validated on lay-reported answers."},
@@ -225,6 +239,7 @@ def create_app(model_dir: Optional[Path] = None) -> FastAPI:
             "accuracyWarning": ("Many answers are missing; results are much less reliable." if len(answered) < 8 else None),
             "predictions": preds,
             "topCondition": top_condition,
+            "carePlan": basic_care_plan(top_condition["condition"] if top_condition else None),
             "scoreNote": (
                 "No disease ranking is shown because every symptom question was explicitly answered 'none'."
                 if no_symptoms_reported else
